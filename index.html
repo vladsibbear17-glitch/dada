@@ -133,7 +133,7 @@
         .option-btn:active {
             transform: scale(0.95);
         }
-        /* Кнопка "Нет" - изначально на своем месте, убегает при наведении */
+        /* Кнопка "Нет" - убегает при наведении */
         #noBtn {
             background: #ff4757;
             color: white;
@@ -218,7 +218,6 @@
             outline: none;
             border-color: #fd79a8;
         }
-        /* Результат */
         .result-container {
             text-align: center;
         }
@@ -247,6 +246,7 @@
             flex-direction: column;
             gap: 10px;
         }
+        /* Адаптив для телефонов */
         @media (max-width: 500px) {
             #app {
                 padding: 25px 20px;
@@ -275,7 +275,7 @@
 <body>
     <div class="container">
         <div id="app">
-            <!-- Шаг 1: Приветствие -->
+            <!-- Шаг 0: Приветствие -->
             <div id="step0" class="step active">
                 <div class="emoji-big">💕</div>
                 <h1>Свидание мечты</h1>
@@ -283,7 +283,7 @@
                 <button class="btn-primary" onclick="nextStep(1)">Начать ➜</button>
             </div>
 
-            <!-- Шаг 2: Хочет ли на свидание -->
+            <!-- Шаг 1: Хочет ли на свидание -->
             <div id="step1" class="step">
                 <div class="progress-bar"><div class="progress" style="width: 10%"></div></div>
                 <div class="question">
@@ -297,7 +297,7 @@
                 </div>
             </div>
 
-            <!-- Шаг 3: Формат свидания -->
+            <!-- Шаг 2: Формат -->
             <div id="step2" class="step">
                 <div class="progress-bar"><div class="progress" style="width: 30%"></div></div>
                 <div class="question">
@@ -314,7 +314,7 @@
                 </div>
             </div>
 
-            <!-- Шаг 4: Кухня (если ресторан/кафе) -->
+            <!-- Шаг 3: Кухня -->
             <div id="step3" class="step">
                 <div class="progress-bar"><div class="progress" style="width: 50%"></div></div>
                 <div class="question">
@@ -332,7 +332,7 @@
                 </div>
             </div>
 
-            <!-- Шаг 5: Жанр кино (если кино) -->
+            <!-- Шаг 4: Жанр кино -->
             <div id="step4" class="step">
                 <div class="progress-bar"><div class="progress" style="width: 60%"></div></div>
                 <div class="question">
@@ -349,7 +349,7 @@
                 </div>
             </div>
 
-            <!-- Шаг 6: Когда и во сколько -->
+            <!-- Шаг 5: Дата и время -->
             <div id="step5" class="step">
                 <div class="progress-bar"><div class="progress" style="width: 80%"></div></div>
                 <div class="question">
@@ -367,14 +367,12 @@
                 </div>
             </div>
 
-            <!-- Шаг 7: Результат -->
+            <!-- Шаг 6: Результат -->
             <div id="step6" class="step">
                 <div class="result-container">
                     <div class="confetti">🎉</div>
                     <h2>Вот твоё идеальное свидание! 💖</h2>
-                    <div id="resultCard" class="result-card">
-                        <!-- Заполняется из JS -->
-                    </div>
+                    <div id="resultCard" class="result-card"></div>
                     <div class="result-actions">
                         <button class="btn-primary" onclick="saveToHistory()">💾 Сохранить</button>
                         <button class="btn-secondary" onclick="resetAll()">🔄 Начать заново</button>
@@ -392,26 +390,21 @@
         let answers = {};
         let noBtnTimeout = null;
         let isNoButtonRunning = false;
+        let noBtnAttempts = 0;
+        const maxAttempts = 12;
 
         // ========== НАВИГАЦИЯ ==========
         function nextStep(step) {
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            if (step !== 1) {
-                resetNoButton();
-            }
+            if (step !== 1) resetNoButton();
         }
 
-        // ========== КНОПКА "НЕТ" - УБЕГАЕТ ПО ВСЕМУ ЭКРАНУ ==========
-        let noBtnAttempts = 0;
-        const maxAttempts = 12;
-
+        // ========== КНОПКА "НЕТ" ==========
         function initNoButton() {
             const btn = document.getElementById('noBtn');
             if (!btn) return;
-            
             noBtnAttempts = 0;
             isNoButtonRunning = false;
             btn.classList.remove('running');
@@ -426,28 +419,19 @@
             btn.style.borderColor = '#ff4757';
             btn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
             btn.style.display = 'block';
-            
-            btn.onmouseenter = null;
-            btn.onclick = null;
-            btn.onmousemove = null;
-            btn.ontouchstart = null;
-            
+            btn.removeEventListener('mouseenter', handleNoButtonHover);
+            btn.removeEventListener('touchstart', handleNoButtonTouch);
             btn.addEventListener('mouseenter', handleNoButtonHover);
             btn.addEventListener('touchstart', handleNoButtonTouch);
         }
 
         function handleNoButtonHover(e) {
             const btn = document.getElementById('noBtn');
-            if (!btn) return;
-            
-            if (isNoButtonRunning || btn.classList.contains('disabled')) return;
-            
+            if (!btn || isNoButtonRunning || btn.classList.contains('disabled')) return;
             isNoButtonRunning = true;
             btn.classList.add('running');
             btn.style.position = 'fixed';
-            
             noBtnAttempts++;
-            
             if (noBtnAttempts >= maxAttempts) {
                 btn.textContent = '😅 Ладно, нажми';
                 btn.style.background = '#ff6b81';
@@ -461,62 +445,32 @@
                 btn.classList.add('disabled');
                 btn.removeEventListener('mouseenter', handleNoButtonHover);
                 btn.removeEventListener('touchstart', handleNoButtonTouch);
-                btn.onclick = function() {
-                    saveAnswer('want', 'нет', 2);
-                    hideNoButton();
-                };
+                btn.onclick = function() { saveAnswer('want', 'нет', 2); hideNoButton(); };
                 return;
             }
-            
             const randomX = Math.random() * (window.innerWidth - 200);
             const randomY = Math.random() * (window.innerHeight - 100);
-            
             btn.style.left = randomX + 'px';
             btn.style.top = randomY + 'px';
             btn.style.transform = 'scale(0.95)';
-            
-            const texts = [
-                'Не поймаешь! 😜',
-                'Попробуй ещё! 😏',
-                'Я быстрее! ⚡',
-                'Ага, щас! 😂',
-                'Догони! 🏃‍♀️',
-                'Не сегодня! ✨',
-                'Упс! 😇',
-                'Лови! 🎯',
-                'Мимо! 🤪',
-                'Слишком медленно! 🐢'
-            ];
-            const randomText = texts[Math.floor(Math.random() * texts.length)];
-            btn.textContent = randomText;
-            
-            if (navigator.vibrate) {
-                navigator.vibrate(30);
-            }
-            
+            const texts = ['Не поймаешь! 😜', 'Попробуй ещё! 😏', 'Я быстрее! ⚡', 'Ага, щас! 😂', 'Догони! 🏃‍♀️', 'Не сегодня! ✨', 'Упс! 😇', 'Лови! 🎯', 'Мимо! 🤪', 'Слишком медленно! 🐢'];
+            btn.textContent = texts[Math.floor(Math.random() * texts.length)];
+            if (navigator.vibrate) navigator.vibrate(30);
             clearTimeout(noBtnTimeout);
             noBtnTimeout = setTimeout(() => {
                 btn.style.transform = 'scale(1)';
                 btn.textContent = 'Нет 😅';
-                setTimeout(() => {
-                    isNoButtonRunning = false;
-                }, 100);
+                setTimeout(() => isNoButtonRunning = false, 100);
             }, 400);
         }
 
-        function handleNoButtonTouch(e) {
-            e.preventDefault();
-            handleNoButtonHover(e);
-        }
+        function handleNoButtonTouch(e) { e.preventDefault(); handleNoButtonHover(e); }
 
         function hideNoButton() {
             const btn = document.getElementById('noBtn');
-            if (btn) {
-                btn.style.display = 'none';
-                btn.classList.add('disabled');
+            if (btn) { btn.style.display = 'none'; btn.classList.add('disabled');
                 btn.removeEventListener('mouseenter', handleNoButtonHover);
-                btn.removeEventListener('touchstart', handleNoButtonTouch);
-            }
+                btn.removeEventListener('touchstart', handleNoButtonTouch); }
         }
 
         function showNoButton() {
@@ -532,12 +486,10 @@
                 btn.style.background = '#ff4757';
                 btn.style.borderColor = '#ff4757';
                 btn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
-                
                 btn.removeEventListener('mouseenter', handleNoButtonHover);
                 btn.removeEventListener('touchstart', handleNoButtonTouch);
                 btn.addEventListener('mouseenter', handleNoButtonHover);
                 btn.addEventListener('touchstart', handleNoButtonTouch);
-                
                 noBtnAttempts = 0;
                 isNoButtonRunning = false;
                 btn.onclick = null;
@@ -546,48 +498,21 @@
 
         function resetNoButton() {
             const btn = document.getElementById('noBtn');
-            if (btn) {
-                btn.style.display = 'none';
-                btn.classList.remove('running');
+            if (btn) { btn.style.display = 'none'; btn.classList.remove('running');
                 btn.classList.add('disabled');
                 btn.removeEventListener('mouseenter', handleNoButtonHover);
-                btn.removeEventListener('touchstart', handleNoButtonTouch);
-            }
+                btn.removeEventListener('touchstart', handleNoButtonTouch); }
         }
 
         // ========== СОХРАНЕНИЕ ОТВЕТОВ ==========
         function saveAnswer(key, value, nextStepNum) {
             answers[key] = value;
-            
-            if (key === 'want' && value === 'нет') {
-                hideNoButton();
-            }
-            
-            if (key === 'format' && (value === 'ресторан' || value === 'кафе')) {
-                nextStep(3);
-                return;
-            }
-            
-            if (key === 'format' && value === 'кино') {
-                nextStep(4);
-                return;
-            }
-            
-            if (key === 'format') {
-                nextStep(5);
-                return;
-            }
-            
-            if (key === 'cuisine') {
-                nextStep(5);
-                return;
-            }
-            
-            if (key === 'genre') {
-                nextStep(5);
-                return;
-            }
-            
+            if (key === 'want' && value === 'нет') { hideNoButton(); }
+            if (key === 'format' && (value === 'ресторан' || value === 'кафе')) { nextStep(3); return; }
+            if (key === 'format' && value === 'кино') { nextStep(4); return; }
+            if (key === 'format') { nextStep(5); return; }
+            if (key === 'cuisine') { nextStep(5); return; }
+            if (key === 'genre') { nextStep(5); return; }
             nextStep(nextStepNum);
         }
 
@@ -595,12 +520,7 @@
         function saveDateTime() {
             const date = document.getElementById('dateInput').value;
             const time = document.getElementById('timeInput').value;
-            
-            if (!date) {
-                alert('Пожалуйста, выберите дату!');
-                return;
-            }
-            
+            if (!date) { alert('Пожалуйста, выберите дату!'); return; }
             answers.date = date;
             answers.time = time;
             generateResult();
@@ -610,57 +530,50 @@
         // ========== РЕЗУЛЬТАТ ==========
         function generateResult() {
             const card = document.getElementById('resultCard');
-            
             let resultHTML = `
                 <p><span class="label">💭 Хочет на свидание:</span> ${answers.want || 'Не указано'}</p>
                 <p><span class="label">📍 Формат:</span> ${answers.format || 'Не указано'}</p>
             `;
-            
             if (answers.format === 'ресторан' || answers.format === 'кафе') {
                 resultHTML += `<p><span class="label">🍽 Кухня:</span> ${answers.cuisine || 'Любая'}</p>`;
             }
-            
             if (answers.format === 'кино') {
                 resultHTML += `<p><span class="label">🎬 Жанр:</span> ${answers.genre || 'Любой'}</p>`;
             }
-            
             resultHTML += `
                 <p><span class="label">📅 Дата:</span> ${answers.date ? formatDate(answers.date) : 'Не указана'}</p>
                 <p><span class="label">⏰ Время:</span> ${answers.time || 'Не указано'}</p>
             `;
-            
             card.innerHTML = resultHTML;
         }
 
         function formatDate(dateStr) {
             const d = new Date(dateStr + 'T00:00:00');
-            return d.toLocaleDateString('ru-RU', {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-            });
+            return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // ========== ОТПРАВКА В GOOGLE SHEETS ==========
+        // ========== ОТПРАВКА В GOOGLE SHEETS (УНИВЕРСАЛЬНАЯ) ==========
         async function sendToGoogleSheets(answers) {
             try {
+                // Формируем данные для отправки
+                const formData = new URLSearchParams();
+                formData.append('want', answers.want || '');
+                formData.append('format', answers.format || '');
+                formData.append('cuisine', answers.cuisine || '');
+                formData.append('genre', answers.genre || '');
+                formData.append('date', answers.date || '');
+                formData.append('time', answers.time || '');
+
                 // Отправляем данные
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: JSON.stringify({
-                        want: answers.want || '',
-                        format: answers.format || '',
-                        cuisine: answers.cuisine || '',
-                        genre: answers.genre || '',
-                        date: answers.date || '',
-                        time: answers.time || ''
-                    })
+                    body: formData
                 });
-                
+
                 console.log('✅ Данные отправлены в Google Sheets');
                 return true;
             } catch (error) {
@@ -671,18 +584,16 @@
 
         // ========== СОХРАНЕНИЕ ==========
         async function saveToHistory() {
-            // Показываем индикатор загрузки
             const saveBtn = document.querySelector('.result-actions .btn-primary');
             const originalText = saveBtn.textContent;
             saveBtn.textContent = '⏳ Отправка...';
             saveBtn.disabled = true;
-            
+
             const success = await sendToGoogleSheets(answers);
-            
-            // Возвращаем кнопку в исходное состояние
+
             saveBtn.textContent = originalText;
             saveBtn.disabled = false;
-            
+
             if (success) {
                 alert('✅ Свидание сохранено в Google Таблицу!');
             } else {
@@ -696,12 +607,9 @@
                 answers = {};
                 noBtnAttempts = 0;
                 isNoButtonRunning = false;
-                
                 document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
                 document.getElementById('step0').classList.add('active');
-                
                 showNoButton();
-                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
@@ -711,7 +619,6 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('dateInput').min = today;
             document.getElementById('dateInput').value = today;
-            
             initNoButton();
         });
 
@@ -720,7 +627,6 @@
             if (btn && btn.classList.contains('running')) {
                 const left = parseInt(btn.style.left);
                 const top = parseInt(btn.style.top);
-                
                 if (left > window.innerWidth - 200 || top > window.innerHeight - 100) {
                     btn.style.left = '50%';
                     btn.style.top = '50%';
