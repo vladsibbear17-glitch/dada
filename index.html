@@ -386,7 +386,7 @@
 
     <script>
         // ========== ВАШ URL ДЛЯ GOOGLE TABLES ==========
-        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw-x9YgCV-8-3F08zKC5JgYhXQmrIHWKsp4WW4oco8WWmBu1jlkekZVtS7kpFY3kJHcQg/exec';
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKTwVmL2yv17X7dF0hRD5sSS8PYyhoeT2KljbS74zoLElFPCcLPwDwq5qDSpjVh-WInQ/exec';
 
         // ========== СОСТОЯНИЕ ==========
         let answers = {};
@@ -644,6 +644,7 @@
         // ========== ОТПРАВКА В GOOGLE SHEETS ==========
         async function sendToGoogleSheets(answers) {
             try {
+                // Отправляем данные
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -659,6 +660,7 @@
                         time: answers.time || ''
                     })
                 });
+                
                 console.log('✅ Данные отправлены в Google Sheets');
                 return true;
             } catch (error) {
