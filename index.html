@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💖 Свидание мечты</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
@@ -19,11 +15,7 @@
             justify-content: center;
             align-items: center;
         }
-        .container {
-            max-width: 600px;
-            width: 100%;
-            margin: 0 auto;
-        }
+        .container { max-width: 600px; width: 100%; margin: 0 auto; }
         #app {
             background: white;
             border-radius: 30px;
@@ -33,72 +25,20 @@
             position: relative;
             overflow: hidden;
         }
-        .step {
-            display: none;
-            animation: slideIn 0.4s ease;
-        }
-        .step.active {
-            display: block;
-        }
+        .step { display: none; animation: slideIn 0.4s ease; }
+        .step.active { display: block; }
         @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
         }
-        .emoji-big {
-            font-size: 80px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #2d3436;
-            font-size: 2.2em;
-            margin-bottom: 10px;
-        }
-        h2 {
-            color: #2d3436;
-            margin-bottom: 25px;
-            font-size: 1.5em;
-        }
-        .subtitle {
-            text-align: center;
-            color: #636e72;
-            font-size: 1.1em;
-            margin-bottom: 30px;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #ecf0f1;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-        .progress {
-            height: 100%;
-            background: linear-gradient(90deg, #fd79a8, #e17055);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-        }
-        .step-num {
-            display: inline-block;
-            background: #fd79a8;
-            color: white;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-        .question {
-            text-align: center;
-        }
+        .emoji-big { font-size: 80px; text-align: center; margin-bottom: 20px; }
+        h1 { text-align: center; color: #2d3436; font-size: 2.2em; margin-bottom: 10px; }
+        h2 { color: #2d3436; margin-bottom: 25px; font-size: 1.5em; }
+        .subtitle { text-align: center; color: #636e72; font-size: 1.1em; margin-bottom: 30px; }
+        .progress-bar { width: 100%; height: 6px; background: #ecf0f1; border-radius: 10px; margin-bottom: 30px; overflow: hidden; }
+        .progress { height: 100%; background: linear-gradient(90deg, #fd79a8, #e17055); border-radius: 10px; transition: width 0.5s ease; }
+        .step-num { display: inline-block; background: #fd79a8; color: white; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 15px; }
+        .question { text-align: center; }
         .options {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -106,9 +46,7 @@
             margin-top: 10px;
             position: relative;
         }
-        .cuisine-options {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
+        .cuisine-options { grid-template-columns: 1fr 1fr 1fr; }
         .option-btn {
             padding: 16px 20px;
             border: 2px solid #ecf0f1;
@@ -130,10 +68,7 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 20px rgba(253, 121, 168, 0.2);
         }
-        .option-btn:active {
-            transform: scale(0.95);
-        }
-        /* Кнопка "Нет" - убегает при наведении */
+        .option-btn:active { transform: scale(0.95); }
         #noBtn {
             background: #ff4757;
             color: white;
@@ -157,12 +92,8 @@
             box-shadow: 0 4px 25px rgba(255, 71, 87, 0.6);
             transform: translateY(-2px);
         }
-        #noBtn:active {
-            transform: scale(0.9);
-        }
-        .option-btn:not(#noBtn) {
-            position: relative;
-        }
+        #noBtn:active { transform: scale(0.9); }
+        .option-btn:not(#noBtn) { position: relative; }
         .btn-primary {
             width: 100%;
             padding: 18px;
@@ -193,19 +124,9 @@
             transition: all 0.3s ease;
             margin-top: 10px;
         }
-        .btn-secondary:hover {
-            background: #dfe6e9;
-        }
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2d3436;
-        }
+        .btn-secondary:hover { background: #dfe6e9; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436; }
         .form-group input {
             width: 100%;
             padding: 14px;
@@ -214,17 +135,9 @@
             font-size: 16px;
             transition: border-color 0.3s;
         }
-        .form-group input:focus {
-            outline: none;
-            border-color: #fd79a8;
-        }
-        .result-container {
-            text-align: center;
-        }
-        .confetti {
-            font-size: 70px;
-            margin-bottom: 10px;
-        }
+        .form-group input:focus { outline: none; border-color: #fd79a8; }
+        .result-container { text-align: center; }
+        .confetti { font-size: 70px; margin-bottom: 10px; }
         .result-card {
             background: linear-gradient(135deg, #fff5f7, #ffe8ec);
             border-radius: 20px;
@@ -232,43 +145,16 @@
             margin: 20px 0;
             text-align: left;
         }
-        .result-card p {
-            margin: 10px 0;
-            font-size: 16px;
-            color: #2d3436;
-        }
-        .result-card .label {
-            font-weight: 700;
-            color: #e17055;
-        }
-        .result-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        /* Адаптив для телефонов */
+        .result-card p { margin: 10px 0; font-size: 16px; color: #2d3436; }
+        .result-card .label { font-weight: 700; color: #e17055; }
+        .result-actions { display: flex; flex-direction: column; gap: 10px; }
         @media (max-width: 500px) {
-            #app {
-                padding: 25px 20px;
-            }
-            .options {
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-            }
-            .cuisine-options {
-                grid-template-columns: 1fr 1fr;
-            }
-            .option-btn {
-                padding: 12px 15px;
-                font-size: 14px;
-                min-height: 50px;
-            }
-            h1 {
-                font-size: 1.8em;
-            }
-            h2 {
-                font-size: 1.2em;
-            }
+            #app { padding: 25px 20px; }
+            .options { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .cuisine-options { grid-template-columns: 1fr 1fr; }
+            .option-btn { padding: 12px 15px; font-size: 14px; min-height: 50px; }
+            h1 { font-size: 1.8em; }
+            h2 { font-size: 1.2em; }
         }
     </style>
 </head>
@@ -552,32 +438,56 @@
             return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // ========== ОТПРАВКА В GOOGLE SHEETS (УНИВЕРСАЛЬНАЯ) ==========
+        // ========== ОТПРАВКА В GOOGLE SHEETS ==========
         async function sendToGoogleSheets(answers) {
             try {
-                // Формируем данные для отправки
-                const formData = new URLSearchParams();
-                formData.append('want', answers.want || '');
-                formData.append('format', answers.format || '');
-                formData.append('cuisine', answers.cuisine || '');
-                formData.append('genre', answers.genre || '');
-                formData.append('date', answers.date || '');
-                formData.append('time', answers.time || '');
+                // Создаём строку параметров
+                const params = new URLSearchParams();
+                params.append('want', answers.want || '');
+                params.append('format', answers.format || '');
+                params.append('cuisine', answers.cuisine || '');
+                params.append('genre', answers.genre || '');
+                params.append('date', answers.date || '');
+                params.append('time', answers.time || '');
 
-                // Отправляем данные
+                console.log('📤 Отправляем:', params.toString());
+
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                     },
-                    body: formData
+                    body: params.toString()
                 });
 
-                console.log('✅ Данные отправлены в Google Sheets');
-                return true;
+                // Пытаемся прочитать ответ
+                const text = await response.text();
+                console.log('📥 Ответ скрипта:', text);
+
+                // Пытаемся распарсить как JSON
+                try {
+                    const json = JSON.parse(text);
+                    if (json.success) {
+                        console.log('✅ Успешно!', json);
+                        return true;
+                    } else {
+                        console.error('❌ Ошибка:', json.error);
+                        alert('Ошибка: ' + json.error);
+                        return false;
+                    }
+                } catch(e) {
+                    // Если не JSON - просто показываем что пришло
+                    console.log('Ответ (не JSON):', text);
+                    if (text.includes('✅')) {
+                        return true;
+                    }
+                    alert('Ответ от сервера: ' + text.substring(0, 200));
+                    return false;
+                }
+
             } catch (error) {
-                console.error('❌ Ошибка отправки:', error);
+                console.error('❌ Ошибка сети:', error);
+                alert('Ошибка соединения: ' + error.message);
                 return false;
             }
         }
@@ -597,7 +507,7 @@
             if (success) {
                 alert('✅ Свидание сохранено в Google Таблицу!');
             } else {
-                alert('❌ Ошибка сохранения. Попробуйте еще раз.');
+                alert('❌ Ошибка сохранения. Проверьте консоль (F12).');
             }
         }
 
