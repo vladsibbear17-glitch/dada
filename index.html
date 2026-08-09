@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ренатик</title>
+    <title>Ренатик 💚</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -389,8 +389,8 @@
         btn.disabled = true;
 
         try {
+            // ✅ ПРАВИЛЬНЫЙ ПОРЯДОК - ТОЧНО КАК В ТАБЛИЦЕ!
             const params = new URLSearchParams();
-            // ✅ ПОРЯДОК ТОЧНО КАК В ТАБЛИЦЕ!
             params.append('want', answers.want || '');
             params.append('format', answers.format || '');
             params.append('custom', answers.custom || '');
@@ -401,6 +401,8 @@
             params.append('time', answers.time || '');
             params.append('massage', answers.massage || '');
 
+            console.log('📤 Отправляем:', params.toString());
+
             const response = await fetch(GOOGLE_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -408,11 +410,16 @@
             });
 
             const text = await response.text();
-            console.log('Ответ:', text);
-            alert('✅ Данные сохранены!');
+            console.log('📥 Ответ:', text);
+            
+            if (text.includes('success')) {
+                alert('✅ Данные сохранены!');
+            } else {
+                alert('❌ Ошибка: ' + text);
+            }
 
         } catch(e) {
-            console.error('Ошибка:', e);
+            console.error('❌ Ошибка:', e);
             alert('❌ Ошибка: ' + e.message);
         }
 
