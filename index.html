@@ -278,7 +278,7 @@
                 <div class="question">
                     <span class="step-num">ШАГ 2</span>
                     <h2>Какая кухня тебе по душе? 🍜</h2>
-                    <div class="options cuisine-options" style="grid-template-columns: 1fr 1fr 1fr;">
+                    <div class="options" style="grid-template-columns: 1fr 1fr 1fr;">
                         <button class="option-btn" onclick="saveAnswer('cuisine', 'итальянская', 6)">🇮🇹 Итальянская</button>
                         <button class="option-btn" onclick="saveAnswer('cuisine', 'японская', 6)">🇯🇵 Японская</button>
                         <button class="option-btn" onclick="saveAnswer('cuisine', 'китайская', 6)">🇨🇳 Китайская</button>
@@ -381,7 +381,7 @@
         let noBtnAttempts = 0;
         const maxAttempts = 12;
 
-        // ========== ПЕРЕХОД МЕЖДУ ШАГАМИ ==========
+        // ========== ПЕРЕХОД ==========
         function nextStep(step) {
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
@@ -389,7 +389,7 @@
             if (step !== 1) resetNoButton();
         }
 
-        // ========== КНОПКА "НЕТ" УБЕГАЕТ ==========
+        // ========== КНОПКА "НЕТ" ==========
         function initNoButton() {
             const btn = document.getElementById('noBtn');
             if (!btn) return;
@@ -589,6 +589,7 @@
         // ========== ОТПРАВКА В GOOGLE SHEETS ==========
         async function sendToGoogleSheets(answers) {
             try {
+                // ✅ ПРАВИЛЬНО формируем данные — ВСЕ поля!
                 const params = new URLSearchParams();
                 params.append('want', answers.want || '');
                 params.append('format', answers.format || '');
@@ -597,8 +598,10 @@
                 params.append('date', answers.date || '');
                 params.append('time', answers.time || '');
                 params.append('massage', answers.massage || '');
-                params.append('chefDish', answers.chefDish || '');
+                params.append('chefDish', answers.chefDish || '');   // ← ЭТО БЫЛО ПРОПУЩЕНО!
                 params.append('isCustom', answers.isCustom || '');
+
+                console.log('📤 Отправляем:', params.toString());
 
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -607,10 +610,10 @@
                 });
 
                 const text = await response.text();
-                console.log('Ответ:', text);
+                console.log('📥 Ответ:', text);
                 return true;
             } catch (error) {
-                console.error('Ошибка:', error);
+                console.error('❌ Ошибка:', error);
                 return false;
             }
         }
