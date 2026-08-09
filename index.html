@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 Ренатик</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 30%, #0d1f0d 60%, #0a2a0a 100%);
+            background-attachment: fixed;
+        }
+        .container { max-width: 600px; width: 100%; margin: 0 auto; }
+        #app {
+            background: rgba(20, 20, 20, 0.95);
+            border-radius: 30px;
+            padding: 40px 35px;
+            box-shadow: 0 20px 60px rgba(0, 50, 0, 0.4), 0 0 40px rgba(0, 80, 0, 0.15);
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 180, 0, 0.15);
+        }
+        #app::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(0, 255, 0, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .step { display: none; animation: slideIn 0.5s ease; position: relative; z-index: 1; }
+        .step.active { display: block; }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .emoji-big { font-size: 70px; text-align: center; margin-bottom: 15px; }
+        h2 {
+            color: #d0ffd0;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: #1a2a1a;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00aa44, #00ff88, #00aa44);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+        .step-num {
+            display: inline-block;
+            background: linear-gradient(135deg, #00aa44, #007733);
+            color: #fff;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        .question { text-align: center; }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+            position: relative;
+        }
+        .option-btn {
+            padding: 16px 20px;
+            border: 1px solid #2a4a2a;
+            background: rgba(20, 30, 20, 0.8);
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #b8d8b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .option-btn:hover {
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 30px rgba(0, 255, 136, 0.08);
+            color: #fff;
+        }
+        .option-btn:active { transform: scale(0.95); }
+
+        #noBtn {
+            background: rgba(80, 20, 20, 0.6);
+            color: #ff6666;
+            border-color: #4a2a2a;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
+            min-width: 120px;
+            position: relative !important;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        #noBtn.running {
+            position: fixed !important;
+            z-index: 9999 !important;
+            transition: all 0.08s ease;
+            min-width: 120px;
+            background: rgba(80, 20, 20, 0.9);
+            border-color: #ff3333;
+        }
+        #noBtn:hover:not(.running) {
+            border-color: #ff3333;
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 5px 30px rgba(255, 0, 0, 0.15);
+        }
+        #noBtn:active { transform: scale(0.9); }
+
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #00aa44, #007733);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 30px rgba(0, 170, 68, 0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(0, 255, 136, 0.2);
+            background: linear-gradient(135deg, #00cc55, #008844);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 18px;
+            background: rgba(40, 40, 40, 0.8);
+            color: #88aa88;
+            border: 1px solid #2a4a2a;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .btn-secondary:hover { background: rgba(50, 50, 50, 0.9); color: #aaddaa; border-color: #3a5a3a; }
+
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #88bb88;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #2a4a2a;
+            border-radius: 12px;
+            font-size: 16px;
+            background: rgba(10, 20, 10, 0.8);
+            color: #d0f0d0;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.05);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #446644; }
+
+        .result-container { text-align: center; }
+        .confetti { font-size: 60px; margin-bottom: 10px; }
+        .result-card {
+            background: rgba(20, 40, 20, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        .result-card p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #b8d8b8;
+        }
+        .result-card .label {
+            font-weight: 600;
+            color: #00ff88;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 500px) {
+            #app { padding: 25px 20px; }
+            .options { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .option-btn { padding: 12px 15px; font-size: 14px; min-height: 50px; }
+            h2 { font-size: 1.1em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="app">
+
+            <!-- Шаг 1: Главный вопрос -->
+            <div id="step1" class="step active">
+                <div class="emoji-big">💚</div>
+                <h2>Ренатик, ты пойдешь со мной на свидание?</h2>
+                <div class="options" style="margin-top: 30px;">
+                    <button class="option-btn" onclick="saveAnswer('want', 'да', 2)" style="border-color: #00aa44; color: #88ff88;">💚 Да!</button>
+                    <button class="option-btn" id="noBtn">❌ Нет</button>
+                </div>
+            </div>
+
+            <!-- Шаг 2: Что бы ты хотела? -->
+            <div id="step2" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 20%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 1</span>
+                    <h2>Что бы ты хотела? 🎯</h2>
+                    <div class="options">
+                        <button class="option-btn" onclick="saveAnswer('format', 'ресторан', 3)">🍽 Ресторан</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'кино', 4)">🎬 Кино</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'парк', 6)">🌳 Парк</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'кафе', 3)">☕ Кафе</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'квест', 6)">🔐 Квест</button>
+                        <button class="option-btn" onclick="showCustomInput()">✏️ Другое</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'шеф владик', 5)" style="border-color: #ffaa00; color: #ffcc44;">👨‍🍳 Шеф Владик</button>
+                    </div>
+                    <div id="customPlaceInput" style="display: none; margin-top: 15px;">
+                        <div class="form-group">
+                            <label>Напиши, что ты хочешь или точное место:</label>
+                            <input type="text" id="customPlace" placeholder="Например: Итальянский ресторан на набережной...">
+                            <button class="btn-primary" onclick="saveCustomPlace()" style="margin-top: 10px;">✅ Выбрать</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 3: Кухня -->
+            <div id="step3" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 40%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 2</span>
+                    <h2>Какая кухня тебе по душе? 🍜</h2>
+                    <div class="options cuisine-options" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'итальянская', 6)">🇮🇹 Итальянская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'японская', 6)">🇯🇵 Японская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'китайская', 6)">🇨🇳 Китайская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'французская', 6)">🇫🇷 Французская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'мексиканская', 6)">🇲🇽 Мексиканская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'русская', 6)">🇷🇺 Русская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'любая', 6)" style="grid-column: span 3;">😋 Любая</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 4: Жанр кино -->
+            <div id="step4" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 50%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 2</span>
+                    <h2>Какой жанр кино предпочитаешь? 🎬</h2>
+                    <div class="options">
+                        <button class="option-btn" onclick="saveAnswer('genre', 'романтика', 6)">💕 Романтика</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'комедия', 6)">😂 Комедия</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'ужасы', 6)">👻 Ужасы</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'драма', 6)">🎭 Драма</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'фантастика', 6)">🚀 Фантастика</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'любой', 6)">🎥 Любой</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 5: Блюдо для Шефа Владика -->
+            <div id="step5" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 60%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 2</span>
+                    <h2>👨‍🍳 Какое блюдо я должен тебе приготовить?</h2>
+                    <p style="color: #88aa88; margin-bottom: 20px;">Напиши что угодно — от пасты до десерта!</p>
+                    <div class="form-group">
+                        <label>Твоё желаемое блюдо:</label>
+                        <input type="text" id="chefDish" placeholder="Например: Спагетти с морепродуктами...">
+                        <button class="btn-primary" onclick="saveChefDish()" style="margin-top: 10px;">✅ Готово!</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 6: Дата и время -->
+            <div id="step6" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 75%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 3</span>
+                    <h2>Когда тебе удобно? 📅</h2>
+                    <div class="form-group">
+                        <label>Дата:</label>
+                        <input type="date" id="dateInput" min="2026-08-01">
+                    </div>
+                    <div class="form-group">
+                        <label>Время:</label>
+                        <input type="time" id="timeInput" value="19:00">
+                    </div>
+                    <button class="btn-primary" onclick="saveDateTime()">✨ Дальше</button>
+                </div>
+            </div>
+
+            <!-- Шаг 7: Массаж -->
+            <div id="step7" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 90%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 4</span>
+                    <h2>💆‍♀️ Хочешь, чтобы после свидания<br>Владик сделал тебе массаж?</h2>
+                    <div class="options" style="margin-top: 20px;">
+                        <button class="option-btn" onclick="saveAnswer('massage', 'да', 8)" style="border-color: #00aa44; color: #88ff88;">💚 Да!</button>
+                        <button class="option-btn" onclick="saveAnswer('massage', 'нет', 8)" style="border-color: #4a2a2a; color: #ff6666;">❌ Нет</button>
+                        <button class="option-btn" onclick="saveAnswer('massage', 'может быть', 8)" style="grid-column: span 2;">🤔 Может быть...</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 8: Результат -->
+            <div id="step8" class="step">
+                <div class="result-container">
+                    <div class="confetti">💚</div>
+                    <h2 style="color: #00ff88;">Договорились! 💚</h2>
+                    <div id="resultCard" class="result-card"></div>
+                    <div class="result-actions">
+                        <button class="btn-primary" onclick="saveToHistory()">💾 Сохранить</button>
+                        <button class="btn-secondary" onclick="resetAll()">🔄 Начать заново</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // ========== ВАШ URL ДЛЯ GOOGLE TABLES ==========
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKTwVmL2yv17X7dF0hRD5sSS8PYyhoeT2KljbS74zoLElFPCcLPwDwq5qDSpjVh-WInQ/exec';
+
+        // ========== СОСТОЯНИЕ ==========
+        let answers = {};
+        let noBtnTimeout = null;
+        let isNoButtonRunning = false;
+        let noBtnAttempts = 0;
+        const maxAttempts = 12;
+
+        // ========== ПЕРЕХОД МЕЖДУ ШАГАМИ ==========
+        function nextStep(step) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if (step !== 1) resetNoButton();
+        }
+
+        // ========== КНОПКА "НЕТ" УБЕГАЕТ ==========
+        function initNoButton() {
+            const btn = document.getElementById('noBtn');
+            if (!btn) return;
+            noBtnAttempts = 0;
+            isNoButtonRunning = false;
+            btn.classList.remove('running');
+            btn.style.position = 'relative';
+            btn.style.left = 'auto';
+            btn.style.top = 'auto';
+            btn.style.transform = 'none';
+            btn.style.zIndex = '1';
+            btn.textContent = '❌ Нет';
+            btn.style.background = 'rgba(80, 20, 20, 0.6)';
+            btn.style.color = '#ff6666';
+            btn.style.borderColor = '#4a2a2a';
+            btn.style.boxShadow = '0 4px 15px rgba(255, 0, 0, 0.1)';
+            btn.style.display = 'block';
+            btn.removeEventListener('mouseenter', handleNoButtonHover);
+            btn.removeEventListener('touchstart', handleNoButtonTouch);
+            btn.addEventListener('mouseenter', handleNoButtonHover);
+            btn.addEventListener('touchstart', handleNoButtonTouch);
+        }
+
+        function handleNoButtonHover(e) {
+            const btn = document.getElementById('noBtn');
+            if (!btn || isNoButtonRunning || btn.classList.contains('disabled')) return;
+            isNoButtonRunning = true;
+            btn.classList.add('running');
+            btn.style.position = 'fixed';
+            noBtnAttempts++;
+            if (noBtnAttempts >= maxAttempts) {
+                btn.textContent = '😅 Ладно, нажми';
+                btn.style.background = 'rgba(80, 20, 20, 0.9)';
+                btn.style.borderColor = '#ff3333';
+                btn.style.transition = 'all 0.3s ease';
+                btn.style.position = 'relative';
+                btn.style.left = 'auto';
+                btn.style.top = 'auto';
+                btn.style.transform = 'none';
+                btn.classList.remove('running');
+                btn.classList.add('disabled');
+                btn.removeEventListener('mouseenter', handleNoButtonHover);
+                btn.removeEventListener('touchstart', handleNoButtonTouch);
+                btn.onclick = function() { saveAnswer('want', 'нет', 2); hideNoButton(); };
+                return;
+            }
+            const randomX = Math.random() * (window.innerWidth - 200);
+            const randomY = Math.random() * (window.innerHeight - 100);
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+            btn.style.transform = 'scale(0.95)';
+            const texts = ['Не поймаешь! 😜', 'Попробуй ещё! 😏', 'Я быстрее! ⚡', 'Ага, щас! 😂', 'Догони! 🏃‍♀️', 'Не сегодня! ✨', 'Упс! 😇', 'Лови! 🎯', 'Мимо! 🤪', 'Слишком медленно! 🐢'];
+            btn.textContent = texts[Math.floor(Math.random() * texts.length)];
+            clearTimeout(noBtnTimeout);
+            noBtnTimeout = setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+                btn.textContent = '❌ Нет';
+                setTimeout(() => isNoButtonRunning = false, 100);
+            }, 400);
+        }
+
+        function handleNoButtonTouch(e) { e.preventDefault(); handleNoButtonHover(e); }
+
+        function hideNoButton() {
+            const btn = document.getElementById('noBtn');
+            if (btn) { btn.style.display = 'none'; btn.classList.add('disabled');
+                btn.removeEventListener('mouseenter', handleNoButtonHover);
+                btn.removeEventListener('touchstart', handleNoButtonTouch); }
+        }
+
+        function showNoButton() {
+            const btn = document.getElementById('noBtn');
+            if (btn) {
+                btn.style.display = 'block';
+                btn.classList.remove('disabled', 'running');
+                btn.style.position = 'relative';
+                btn.style.left = 'auto';
+                btn.style.top = 'auto';
+                btn.style.transform = 'none';
+                btn.textContent = '❌ Нет';
+                btn.style.background = 'rgba(80, 20, 20, 0.6)';
+                btn.style.color = '#ff6666';
+                btn.style.borderColor = '#4a2a2a';
+                btn.style.boxShadow = '0 4px 15px rgba(255, 0, 0, 0.1)';
+                btn.removeEventListener('mouseenter', handleNoButtonHover);
+                btn.removeEventListener('touchstart', handleNoButtonTouch);
+                btn.addEventListener('mouseenter', handleNoButtonHover);
+                btn.addEventListener('touchstart', handleNoButtonTouch);
+                noBtnAttempts = 0;
+                isNoButtonRunning = false;
+                btn.onclick = null;
+            }
+        }
+
+        function resetNoButton() {
+            const btn = document.getElementById('noBtn');
+            if (btn) { btn.style.display = 'none'; btn.classList.remove('running');
+                btn.classList.add('disabled');
+                btn.removeEventListener('mouseenter', handleNoButtonHover);
+                btn.removeEventListener('touchstart', handleNoButtonTouch); }
+        }
+
+        // ========== СОХРАНЕНИЕ ОТВЕТОВ ==========
+        function saveAnswer(key, value, nextStepNum) {
+            answers[key] = value;
+            if (key === 'want' && value === 'нет') { hideNoButton(); }
+            if (key === 'format' && value === 'ресторан') { nextStep(3); return; }
+            if (key === 'format' && value === 'кафе') { nextStep(3); return; }
+            if (key === 'format' && value === 'кино') { nextStep(4); return; }
+            if (key === 'format' && value === 'шеф владик') { nextStep(5); return; }
+            if (key === 'format' && (value === 'парк' || value === 'квест' || value === 'другое')) { nextStep(6); return; }
+            if (key === 'cuisine' || key === 'genre' || key === 'massage') { nextStep(nextStepNum); return; }
+            nextStep(nextStepNum);
+        }
+
+        // ========== ДРУГОЕ ==========
+        function showCustomInput() {
+            document.getElementById('customPlaceInput').style.display = 'block';
+        }
+
+        function saveCustomPlace() {
+            const place = document.getElementById('customPlace').value.trim();
+            if (!place) { alert('Напиши, что ты хочешь!'); return; }
+            answers.format = place;
+            answers.isCustom = 'да';
+            document.getElementById('customPlaceInput').style.display = 'none';
+            nextStep(6);
+        }
+
+        // ========== ШЕФ ВЛАДИК ==========
+        function saveChefDish() {
+            const dish = document.getElementById('chefDish').value.trim();
+            if (!dish) { alert('Напиши блюдо!'); return; }
+            answers.chefDish = dish;
+            nextStep(6);
+        }
+
+        // ========== ДАТА ==========
+        function saveDateTime() {
+            const date = document.getElementById('dateInput').value;
+            const time = document.getElementById('timeInput').value;
+            if (!date) { alert('Выбери дату!'); return; }
+            answers.date = date;
+            answers.time = time;
+            generateResult();
+            nextStep(7);
+        }
+
+        // ========== РЕЗУЛЬТАТ ==========
+        function generateResult() {
+            const card = document.getElementById('resultCard');
+            let resultHTML = '';
+
+            if (answers.want === 'да') {
+                resultHTML += `<p>💚 <span class="label">Ренатик сказала ДА!</span></p>`;
+            } else if (answers.want === 'нет') {
+                resultHTML += `<p>❌ <span class="label">Ренатик сказала НЕТ... 😢</span></p>`;
+            } else {
+                resultHTML += `<p>🤔 <span class="label">Ренатик думает...</span></p>`;
+            }
+
+            if (answers.format) {
+                let formatDisplay = answers.format;
+                if (answers.isCustom === 'да') formatDisplay = `✨ ${answers.format}`;
+                resultHTML += `<p>📍 <span class="label">Формат:</span> ${formatDisplay}</p>`;
+            }
+
+            if (answers.chefDish) {
+                resultHTML += `<p>👨‍🍳 <span class="label">Владик приготовит:</span> ${answers.chefDish}</p>`;
+            }
+
+            if (answers.cuisine && answers.cuisine !== 'любая') {
+                resultHTML += `<p>🍽 <span class="label">Кухня:</span> ${answers.cuisine}</p>`;
+            }
+
+            if (answers.genre && answers.genre !== 'любой') {
+                resultHTML += `<p>🎬 <span class="label">Жанр кино:</span> ${answers.genre}</p>`;
+            }
+
+            if (answers.date) {
+                resultHTML += `<p>📅 <span class="label">Когда:</span> ${formatDate(answers.date)} в ${answers.time || '—'}</p>`;
+            }
+
+            if (answers.massage) {
+                const massageText = answers.massage === 'да' ? '💆‍♀️ Да!' : answers.massage === 'нет' ? '❌ Нет' : '🤔 Может быть';
+                resultHTML += `<p>💆‍♀️ <span class="label">Массаж:</span> ${massageText}</p>`;
+            }
+
+            card.innerHTML = resultHTML;
+        }
+
+        function formatDate(dateStr) {
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+
+        // ========== ОТПРАВКА В GOOGLE SHEETS ==========
+        async function sendToGoogleSheets(answers) {
+            try {
+                const params = new URLSearchParams();
+                params.append('want', answers.want || '');
+                params.append('format', answers.format || '');
+                params.append('cuisine', answers.cuisine || '');
+                params.append('genre', answers.genre || '');
+                params.append('date', answers.date || '');
+                params.append('time', answers.time || '');
+                params.append('massage', answers.massage || '');
+                params.append('chefDish', answers.chefDish || '');
+                params.append('isCustom', answers.isCustom || '');
+
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: params.toString()
+                });
+
+                const text = await response.text();
+                console.log('Ответ:', text);
+                return true;
+            } catch (error) {
+                console.error('Ошибка:', error);
+                return false;
+            }
+        }
+
+        // ========== СОХРАНЕНИЕ ==========
+        async function saveToHistory() {
+            const saveBtn = document.querySelector('.result-actions .btn-primary');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '⏳ Отправка...';
+            saveBtn.disabled = true;
+
+            try {
+                const success = await sendToGoogleSheets(answers);
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+                if (success) {
+                    alert('✅ Договорились! 💚');
+                } else {
+                    alert('❌ Ошибка сохранения. Проверьте консоль.');
+                }
+            } catch (error) {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+                alert('❌ Ошибка: ' + error.message);
+            }
+        }
+
+        // ========== СБРОС ==========
+        function resetAll() {
+            if (confirm('Начать заново?')) {
+                answers = {};
+                noBtnAttempts = 0;
+                isNoButtonRunning = false;
+                document.getElementById('customPlaceInput').style.display = 'none';
+                document.getElementById('customPlace').value = '';
+                document.getElementById('chefDish').value = '';
+                document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+                document.getElementById('step1').classList.add('active');
+                showNoButton();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').min = today;
+            document.getElementById('dateInput').value = today;
+            initNoButton();
+        });
+
+        window.addEventListener('resize', () => {
+            const btn = document.getElementById('noBtn');
+            if (btn && btn.classList.contains('running')) {
+                const left = parseInt(btn.style.left);
+                const top = parseInt(btn.style.top);
+                if (left > window.innerWidth - 200 || top > window.innerHeight - 100) {
+                    btn.style.left = '50%';
+                    btn.style.top = '50%';
+                    btn.style.transform = 'translate(-50%, -50%)';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
