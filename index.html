@@ -3,41 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💖 Свидание мечты</title>
+    <title>💖 Ренатик</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            background: #0a0a0a;
             min-height: 100vh;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 30%, #0d1f0d 60%, #0a2a0a 100%);
+            background-attachment: fixed;
         }
         .container { max-width: 600px; width: 100%; margin: 0 auto; }
         #app {
-            background: white;
+            background: rgba(20, 20, 20, 0.95);
             border-radius: 30px;
             padding: 40px 35px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 50, 0, 0.4), 0 0 40px rgba(0, 80, 0, 0.15);
             min-height: 500px;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(0, 180, 0, 0.15);
         }
-        .step { display: none; animation: slideIn 0.4s ease; }
+        #app::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(0, 255, 0, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .step { display: none; animation: slideIn 0.5s ease; position: relative; z-index: 1; }
         .step.active { display: block; }
         @keyframes slideIn {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .emoji-big { font-size: 80px; text-align: center; margin-bottom: 20px; }
-        h1 { text-align: center; color: #2d3436; font-size: 2.2em; margin-bottom: 10px; }
-        h2 { color: #2d3436; margin-bottom: 25px; font-size: 1.5em; }
-        .subtitle { text-align: center; color: #636e72; font-size: 1.1em; margin-bottom: 30px; }
-        .progress-bar { width: 100%; height: 6px; background: #ecf0f1; border-radius: 10px; margin-bottom: 30px; overflow: hidden; }
-        .progress { height: 100%; background: linear-gradient(90deg, #fd79a8, #e17055); border-radius: 10px; transition: width 0.5s ease; }
-        .step-num { display: inline-block; background: #fd79a8; color: white; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 15px; }
+        .emoji-big { font-size: 70px; text-align: center; margin-bottom: 15px; }
+        h1 {
+            text-align: center;
+            color: #b8ffb8;
+            font-size: 2em;
+            margin-bottom: 5px;
+            text-shadow: 0 0 30px rgba(0, 200, 0, 0.2);
+            letter-spacing: 1px;
+        }
+        h1 .highlight { color: #00ff88; }
+        h2 {
+            color: #d0ffd0;
+            margin-bottom: 25px;
+            font-size: 1.4em;
+            text-align: center;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        .subtitle { text-align: center; color: #88aa88; font-size: 1em; margin-bottom: 25px; }
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: #1a2a1a;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00aa44, #00ff88, #00aa44);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+        .step-num {
+            display: inline-block;
+            background: linear-gradient(135deg, #00aa44, #007733);
+            color: #fff;
+            padding: 3px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
         .question { text-align: center; }
         .options {
             display: grid;
@@ -46,35 +97,38 @@
             margin-top: 10px;
             position: relative;
         }
-        .cuisine-options { grid-template-columns: 1fr 1fr 1fr; }
         .option-btn {
             padding: 16px 20px;
-            border: 2px solid #ecf0f1;
-            background: white;
+            border: 1px solid #2a4a2a;
+            background: rgba(20, 30, 20, 0.8);
             border-radius: 16px;
             font-size: 16px;
-            font-weight: 600;
-            color: #2d3436;
+            font-weight: 500;
+            color: #b8d8b8;
             cursor: pointer;
             transition: all 0.3s ease;
             min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(4px);
         }
         .option-btn:hover {
-            border-color: #fd79a8;
-            background: #fff5f7;
+            border-color: #00ff88;
+            background: rgba(0, 255, 136, 0.08);
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(253, 121, 168, 0.2);
+            box-shadow: 0 5px 30px rgba(0, 255, 136, 0.08);
+            color: #fff;
         }
         .option-btn:active { transform: scale(0.95); }
+        .option-btn .emoji { margin-right: 8px; }
+
+        /* Кнопка "Нет" - убегает */
         #noBtn {
-            background: #ff4757;
-            color: white;
-            border-color: #ff4757;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+            background: rgba(80, 20, 20, 0.6);
+            color: #ff6666;
+            border-color: #4a2a2a;
+            box-shadow: 0 4px 15px rgba(255, 0, 0, 0.1);
             min-width: 120px;
             position: relative !important;
             z-index: 1;
@@ -85,161 +139,208 @@
             z-index: 9999 !important;
             transition: all 0.08s ease;
             min-width: 120px;
+            background: rgba(80, 20, 20, 0.9);
+            border-color: #ff3333;
         }
         #noBtn:hover:not(.running) {
-            background: #ff4757;
-            border-color: #ff4757;
-            box-shadow: 0 4px 25px rgba(255, 71, 87, 0.6);
-            transform: translateY(-2px);
+            border-color: #ff3333;
+            background: rgba(255, 0, 0, 0.1);
+            box-shadow: 0 5px 30px rgba(255, 0, 0, 0.15);
         }
         #noBtn:active { transform: scale(0.9); }
-        .option-btn:not(#noBtn) { position: relative; }
+
         .btn-primary {
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #fd79a8, #e17055);
+            background: linear-gradient(135deg, #00aa44, #007733);
             color: white;
-            border: none;
-            border-radius: 16px;
-            font-size: 18px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 15px;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(225, 112, 85, 0.4);
-        }
-        .btn-secondary {
-            width: 100%;
-            padding: 18px;
-            background: #ecf0f1;
-            color: #2d3436;
             border: none;
             border-radius: 16px;
             font-size: 18px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-top: 15px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 30px rgba(0, 170, 68, 0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 40px rgba(0, 255, 136, 0.2);
+            background: linear-gradient(135deg, #00cc55, #008844);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 18px;
+            background: rgba(40, 40, 40, 0.8);
+            color: #88aa88;
+            border: 1px solid #2a4a2a;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
             margin-top: 10px;
         }
-        .btn-secondary:hover { background: #dfe6e9; }
+        .btn-secondary:hover { background: rgba(50, 50, 50, 0.9); color: #aaddaa; border-color: #3a5a3a; }
+
         .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #2d3436; }
-        .form-group input {
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #88bb88;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        .form-group input,
+        .form-group textarea {
             width: 100%;
             padding: 14px;
-            border: 2px solid #ecf0f1;
+            border: 1px solid #2a4a2a;
             border-radius: 12px;
             font-size: 16px;
+            background: rgba(10, 20, 10, 0.8);
+            color: #d0f0d0;
             transition: border-color 0.3s;
+            font-family: inherit;
         }
-        .form-group input:focus { outline: none; border-color: #fd79a8; }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.05);
+        }
+        .form-group input::placeholder,
+        .form-group textarea::placeholder { color: #446644; }
+
         .result-container { text-align: center; }
-        .confetti { font-size: 70px; margin-bottom: 10px; }
+        .confetti { font-size: 60px; margin-bottom: 10px; }
         .result-card {
-            background: linear-gradient(135deg, #fff5f7, #ffe8ec);
+            background: rgba(20, 40, 20, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.1);
             border-radius: 20px;
             padding: 30px;
             margin: 20px 0;
             text-align: left;
         }
-        .result-card p { margin: 10px 0; font-size: 16px; color: #2d3436; }
-        .result-card .label { font-weight: 700; color: #e17055; }
-        .result-actions { display: flex; flex-direction: column; gap: 10px; }
+        .result-card p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #b8d8b8;
+        }
+        .result-card .label {
+            font-weight: 600;
+            color: #00ff88;
+            letter-spacing: 0.5px;
+        }
+
+        /* Адаптив */
         @media (max-width: 500px) {
             #app { padding: 25px 20px; }
             .options { grid-template-columns: 1fr 1fr; gap: 8px; }
-            .cuisine-options { grid-template-columns: 1fr 1fr; }
             .option-btn { padding: 12px 15px; font-size: 14px; min-height: 50px; }
-            h1 { font-size: 1.8em; }
-            h2 { font-size: 1.2em; }
+            h1 { font-size: 1.5em; }
+            h2 { font-size: 1.1em; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="app">
-            <!-- Шаг 0: Приветствие -->
-            <div id="step0" class="step active">
-                <div class="emoji-big">💕</div>
-                <h1>Свидание мечты</h1>
-                <p class="subtitle">Ответь на несколько вопросов, и я подберу идеальное свидание для тебя!</p>
-                <button class="btn-primary" onclick="nextStep(1)">Начать ➜</button>
-            </div>
 
-            <!-- Шаг 1: Хочет ли на свидание -->
-            <div id="step1" class="step">
-                <div class="progress-bar"><div class="progress" style="width: 10%"></div></div>
-                <div class="question">
-                    <span class="step-num">1 из 5</span>
-                    <h2>Хочешь ли ты пойти на свидание? 💭</h2>
-                    <div class="options">
-                        <button class="option-btn" onclick="saveAnswer('want', 'да', 2)">Да! ❤️</button>
-                        <button class="option-btn" id="noBtn">Нет 😅</button>
-                        <button class="option-btn" onclick="saveAnswer('want', 'может быть', 2)">Может быть 🤔</button>
-                    </div>
+            <!-- Шаг 1: Главный вопрос -->
+            <div id="step1" class="step active">
+                <div class="emoji-big">💚</div>
+                <h2>Ренатик, ты пойдешь со мной на свидание?</h2>
+                <div class="options" style="margin-top: 30px;">
+                    <button class="option-btn" onclick="saveAnswer('want', 'да', 2)" style="border-color: #00aa44; color: #88ff88;">💚 Да!</button>
+                    <button class="option-btn" id="noBtn">❌ Нет</button>
                 </div>
             </div>
 
-            <!-- Шаг 2: Формат -->
+            <!-- Шаг 2: Что бы ты хотела? -->
             <div id="step2" class="step">
-                <div class="progress-bar"><div class="progress" style="width: 30%"></div></div>
+                <div class="progress-bar"><div class="progress" style="width: 20%"></div></div>
                 <div class="question">
-                    <span class="step-num">2 из 5</span>
+                    <span class="step-num">ШАГ 1</span>
                     <h2>Что бы ты хотела? 🎯</h2>
                     <div class="options">
                         <button class="option-btn" onclick="saveAnswer('format', 'ресторан', 3)">🍽 Ресторан</button>
                         <button class="option-btn" onclick="saveAnswer('format', 'кино', 4)">🎬 Кино</button>
-                        <button class="option-btn" onclick="saveAnswer('format', 'парк', 5)">🌳 Парк</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'парк', 3)">🌳 Парк</button>
                         <button class="option-btn" onclick="saveAnswer('format', 'кафе', 3)">☕ Кафе</button>
-                        <button class="option-btn" onclick="saveAnswer('format', 'квест', 5)">🔐 Квест</button>
-                        <button class="option-btn" onclick="saveAnswer('format', 'другое', 5)">✨ Другое</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'квест', 3)">🔐 Квест</button>
+                        <button class="option-btn" onclick="showCustomInput()">✏️ Другое</button>
+                        <button class="option-btn" onclick="saveAnswer('format', 'шеф владик', 5)" style="border-color: #ffaa00; color: #ffcc44;">👨‍🍳 Шеф Владик</button>
+                    </div>
+                    <div id="customPlaceInput" style="display: none; margin-top: 15px;">
+                        <div class="form-group">
+                            <label>Напиши, что ты хочешь или точное место:</label>
+                            <input type="text" id="customPlace" placeholder="Например: Итальянский ресторан на набережной...">
+                            <button class="btn-primary" onclick="saveCustomPlace()" style="margin-top: 10px;">✅ Выбрать</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Шаг 3: Кухня -->
+            <!-- Шаг 3: Кухня (для ресторана/кафе) -->
             <div id="step3" class="step">
-                <div class="progress-bar"><div class="progress" style="width: 50%"></div></div>
+                <div class="progress-bar"><div class="progress" style="width: 40%"></div></div>
                 <div class="question">
-                    <span class="step-num">3 из 5</span>
-                    <h2>Какая кухня тебе нравится? 🍜</h2>
-                    <div class="options cuisine-options">
-                        <button class="option-btn" onclick="saveAnswer('cuisine', 'итальянская', 5)">🇮🇹 Итальянская</button>
-                        <button class="option-btn" onclick="saveAnswer('cuisine', 'японская', 5)">🇯🇵 Японская</button>
-                        <button class="option-btn" onclick="saveAnswer('cuisine', 'китайская', 5)">🇨🇳 Китайская</button>
-                        <button class="option-btn" onclick="saveAnswer('cuisine', 'французская', 5)">🇫🇷 Французская</button>
-                        <button class="option-btn" onclick="saveAnswer('cuisine', 'мексиканская', 5)">🇲🇽 Мексиканская</button>
-                        <button class="option-btn" onclick="saveAnswer('cuisine', 'русская', 5)">🇷🇺 Русская</button>
-                        <button class="option-btn" onclick="saveAnswer('cuisine', 'любая', 5)">😋 Любая</button>
+                    <span class="step-num">ШАГ 2</span>
+                    <h2>Какая кухня тебе по душе? 🍜</h2>
+                    <div class="options cuisine-options" style="grid-template-columns: 1fr 1fr 1fr;">
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'итальянская', 6)">🇮🇹 Итальянская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'японская', 6)">🇯🇵 Японская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'китайская', 6)">🇨🇳 Китайская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'французская', 6)">🇫🇷 Французская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'мексиканская', 6)">🇲🇽 Мексиканская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'русская', 6)">🇷🇺 Русская</button>
+                        <button class="option-btn" onclick="saveAnswer('cuisine', 'любая', 6)" style="grid-column: span 3;">😋 Любая</button>
                     </div>
                 </div>
             </div>
 
             <!-- Шаг 4: Жанр кино -->
             <div id="step4" class="step">
-                <div class="progress-bar"><div class="progress" style="width: 60%"></div></div>
+                <div class="progress-bar"><div class="progress" style="width: 50%"></div></div>
                 <div class="question">
-                    <span class="step-num">4 из 5</span>
+                    <span class="step-num">ШАГ 2</span>
                     <h2>Какой жанр кино предпочитаешь? 🎬</h2>
                     <div class="options">
-                        <button class="option-btn" onclick="saveAnswer('genre', 'романтика', 5)">💕 Романтика</button>
-                        <button class="option-btn" onclick="saveAnswer('genre', 'комедия', 5)">😂 Комедия</button>
-                        <button class="option-btn" onclick="saveAnswer('genre', 'ужасы', 5)">👻 Ужасы</button>
-                        <button class="option-btn" onclick="saveAnswer('genre', 'драма', 5)">🎭 Драма</button>
-                        <button class="option-btn" onclick="saveAnswer('genre', 'фантастика', 5)">🚀 Фантастика</button>
-                        <button class="option-btn" onclick="saveAnswer('genre', 'любой', 5)">🎥 Любой</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'романтика', 6)">💕 Романтика</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'комедия', 6)">😂 Комедия</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'ужасы', 6)">👻 Ужасы</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'драма', 6)">🎭 Драма</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'фантастика', 6)">🚀 Фантастика</button>
+                        <button class="option-btn" onclick="saveAnswer('genre', 'любой', 6)">🎥 Любой</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Шаг 5: Дата и время -->
+            <!-- Шаг 5: Блюдо для Шефа Владика -->
             <div id="step5" class="step">
-                <div class="progress-bar"><div class="progress" style="width: 80%"></div></div>
+                <div class="progress-bar"><div class="progress" style="width: 60%"></div></div>
                 <div class="question">
-                    <span class="step-num">5 из 5</span>
+                    <span class="step-num">ШАГ 2</span>
+                    <h2>👨‍🍳 Какое блюдо я должен тебе приготовить?</h2>
+                    <p style="color: #88aa88; margin-bottom: 20px;">Напиши что угодно — от пасты до десерта!</p>
+                    <div class="form-group">
+                        <label>Твоё желаемое блюдо:</label>
+                        <input type="text" id="chefDish" placeholder="Например: Спагетти с морепродуктами...">
+                        <button class="btn-primary" onclick="saveChefDish()" style="margin-top: 10px;">✅ Готово!</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 6: Дата и время -->
+            <div id="step6" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 75%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 3</span>
                     <h2>Когда тебе удобно? 📅</h2>
                     <div class="form-group">
                         <label>Дата:</label>
@@ -249,15 +350,29 @@
                         <label>Время:</label>
                         <input type="time" id="timeInput" value="19:00">
                     </div>
-                    <button class="btn-primary" onclick="saveDateTime()">✨ Подобрать свидание!</button>
+                    <button class="btn-primary" onclick="saveDateTime()">✨ Дальше</button>
                 </div>
             </div>
 
-            <!-- Шаг 6: Результат -->
-            <div id="step6" class="step">
+            <!-- Шаг 7: Массаж -->
+            <div id="step7" class="step">
+                <div class="progress-bar"><div class="progress" style="width: 90%"></div></div>
+                <div class="question">
+                    <span class="step-num">ШАГ 4</span>
+                    <h2>💆‍♀️ Хочешь, чтобы после свидания<br>Владик сделал тебе массаж?</h2>
+                    <div class="options" style="margin-top: 20px;">
+                        <button class="option-btn" onclick="saveAnswer('massage', 'да', 8)" style="border-color: #00aa44; color: #88ff88;">💚 Да!</button>
+                        <button class="option-btn" onclick="saveAnswer('massage', 'нет', 8)" style="border-color: #4a2a2a; color: #ff6666;">❌ Нет</button>
+                        <button class="option-btn" onclick="saveAnswer('massage', 'может быть', 8)" style="grid-column: span 2;">🤔 Может быть...</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Шаг 8: Результат -->
+            <div id="step8" class="step">
                 <div class="result-container">
-                    <div class="confetti">🎉</div>
-                    <h2>Вот твоё идеальное свидание! 💖</h2>
+                    <div class="confetti">💚</div>
+                    <h2 style="color: #00ff88;">Договорились! 💚</h2>
                     <div id="resultCard" class="result-card"></div>
                     <div class="result-actions">
                         <button class="btn-primary" onclick="saveToHistory()">💾 Сохранить</button>
@@ -265,6 +380,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -279,7 +395,7 @@
         let noBtnAttempts = 0;
         const maxAttempts = 12;
 
-        // ========== НАВИГАЦИЯ ==========
+        // ========== ПЕРЕХОД МЕЖДУ ШАГАМИ ==========
         function nextStep(step) {
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
@@ -287,7 +403,7 @@
             if (step !== 1) resetNoButton();
         }
 
-        // ========== КНОПКА "НЕТ" ==========
+        // ========== КНОПКА "НЕТ" УБЕГАЕТ ==========
         function initNoButton() {
             const btn = document.getElementById('noBtn');
             if (!btn) return;
@@ -299,11 +415,11 @@
             btn.style.top = 'auto';
             btn.style.transform = 'none';
             btn.style.zIndex = '1';
-            btn.textContent = 'Нет 😅';
-            btn.style.background = '#ff4757';
-            btn.style.color = 'white';
-            btn.style.borderColor = '#ff4757';
-            btn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+            btn.textContent = '❌ Нет';
+            btn.style.background = 'rgba(80, 20, 20, 0.6)';
+            btn.style.color = '#ff6666';
+            btn.style.borderColor = '#4a2a2a';
+            btn.style.boxShadow = '0 4px 15px rgba(255, 0, 0, 0.1)';
             btn.style.display = 'block';
             btn.removeEventListener('mouseenter', handleNoButtonHover);
             btn.removeEventListener('touchstart', handleNoButtonTouch);
@@ -320,8 +436,8 @@
             noBtnAttempts++;
             if (noBtnAttempts >= maxAttempts) {
                 btn.textContent = '😅 Ладно, нажми';
-                btn.style.background = '#ff6b81';
-                btn.style.borderColor = '#ff6b81';
+                btn.style.background = 'rgba(80, 20, 20, 0.9)';
+                btn.style.borderColor = '#ff3333';
                 btn.style.transition = 'all 0.3s ease';
                 btn.style.position = 'relative';
                 btn.style.left = 'auto';
@@ -345,7 +461,7 @@
             clearTimeout(noBtnTimeout);
             noBtnTimeout = setTimeout(() => {
                 btn.style.transform = 'scale(1)';
-                btn.textContent = 'Нет 😅';
+                btn.textContent = '❌ Нет';
                 setTimeout(() => isNoButtonRunning = false, 100);
             }, 400);
         }
@@ -368,10 +484,11 @@
                 btn.style.left = 'auto';
                 btn.style.top = 'auto';
                 btn.style.transform = 'none';
-                btn.textContent = 'Нет 😅';
-                btn.style.background = '#ff4757';
-                btn.style.borderColor = '#ff4757';
-                btn.style.boxShadow = '0 4px 15px rgba(255, 71, 87, 0.4)';
+                btn.textContent = '❌ Нет';
+                btn.style.background = 'rgba(80, 20, 20, 0.6)';
+                btn.style.color = '#ff6666';
+                btn.style.borderColor = '#4a2a2a';
+                btn.style.boxShadow = '0 4px 15px rgba(255, 0, 0, 0.1)';
                 btn.removeEventListener('mouseenter', handleNoButtonHover);
                 btn.removeEventListener('touchstart', handleNoButtonTouch);
                 btn.addEventListener('mouseenter', handleNoButtonHover);
@@ -394,42 +511,93 @@
         function saveAnswer(key, value, nextStepNum) {
             answers[key] = value;
             if (key === 'want' && value === 'нет') { hideNoButton(); }
-            if (key === 'format' && (value === 'ресторан' || value === 'кафе')) { nextStep(3); return; }
+            if (key === 'format' && value === 'ресторан') { nextStep(3); return; }
+            if (key === 'format' && value === 'кафе') { nextStep(3); return; }
             if (key === 'format' && value === 'кино') { nextStep(4); return; }
-            if (key === 'format') { nextStep(5); return; }
-            if (key === 'cuisine') { nextStep(5); return; }
-            if (key === 'genre') { nextStep(5); return; }
+            if (key === 'format' && value === 'шеф владик') { nextStep(5); return; }
+            if (key === 'format' && (value === 'парк' || value === 'квест' || value === 'другое')) { nextStep(6); return; }
+            if (key === 'cuisine' || key === 'genre' || key === 'massage') { nextStep(nextStepNum); return; }
             nextStep(nextStepNum);
+        }
+
+        // ========== ДРУГОЕ (свой вариант) ==========
+        function showCustomInput() {
+            document.getElementById('customPlaceInput').style.display = 'block';
+            document.querySelectorAll('#step2 .option-btn').forEach(btn => {
+                if (btn.textContent.includes('Другое')) {
+                    btn.style.opacity = '0.5';
+                }
+            });
+        }
+
+        function saveCustomPlace() {
+            const place = document.getElementById('customPlace').value.trim();
+            if (!place) { alert('Напиши, что ты хочешь!'); return; }
+            answers.format = place;
+            answers.isCustom = true;
+            document.getElementById('customPlaceInput').style.display = 'none';
+            nextStep(6);
+        }
+
+        // ========== БЛЮДО ДЛЯ ШЕФА ВЛАДИКА ==========
+        function saveChefDish() {
+            const dish = document.getElementById('chefDish').value.trim();
+            if (!dish) { alert('Напиши блюдо!'); return; }
+            answers.chefDish = dish;
+            nextStep(6);
         }
 
         // ========== ДАТА И ВРЕМЯ ==========
         function saveDateTime() {
             const date = document.getElementById('dateInput').value;
             const time = document.getElementById('timeInput').value;
-            if (!date) { alert('Пожалуйста, выберите дату!'); return; }
+            if (!date) { alert('Выбери дату!'); return; }
             answers.date = date;
             answers.time = time;
             generateResult();
-            nextStep(6);
+            nextStep(7);
         }
 
         // ========== РЕЗУЛЬТАТ ==========
         function generateResult() {
             const card = document.getElementById('resultCard');
-            let resultHTML = `
-                <p><span class="label">💭 Хочет на свидание:</span> ${answers.want || 'Не указано'}</p>
-                <p><span class="label">📍 Формат:</span> ${answers.format || 'Не указано'}</p>
-            `;
-            if (answers.format === 'ресторан' || answers.format === 'кафе') {
-                resultHTML += `<p><span class="label">🍽 Кухня:</span> ${answers.cuisine || 'Любая'}</p>`;
+            let resultHTML = ``;
+
+            if (answers.want === 'да') {
+                resultHTML += `<p>💚 <span class="label">Ренатик сказала ДА!</span></p>`;
+            } else if (answers.want === 'нет') {
+                resultHTML += `<p>❌ <span class="label">Ренатик сказала НЕТ... 😢</span></p>`;
+            } else {
+                resultHTML += `<p>🤔 <span class="label">Ренатик думает...</span></p>`;
             }
-            if (answers.format === 'кино') {
-                resultHTML += `<p><span class="label">🎬 Жанр:</span> ${answers.genre || 'Любой'}</p>`;
+
+            if (answers.format) {
+                let formatDisplay = answers.format;
+                if (answers.isCustom) formatDisplay = `✨ ${answers.format}`;
+                resultHTML += `<p>📍 <span class="label">Формат:</span> ${formatDisplay}</p>`;
             }
-            resultHTML += `
-                <p><span class="label">📅 Дата:</span> ${answers.date ? formatDate(answers.date) : 'Не указана'}</p>
-                <p><span class="label">⏰ Время:</span> ${answers.time || 'Не указано'}</p>
-            `;
+
+            if (answers.chefDish) {
+                resultHTML += `<p>👨‍🍳 <span class="label">Владик приготовит:</span> ${answers.chefDish}</p>`;
+            }
+
+            if (answers.cuisine && answers.cuisine !== 'любая') {
+                resultHTML += `<p>🍽 <span class="label">Кухня:</span> ${answers.cuisine}</p>`;
+            }
+
+            if (answers.genre && answers.genre !== 'любой') {
+                resultHTML += `<p>🎬 <span class="label">Жанр кино:</span> ${answers.genre}</p>`;
+            }
+
+            if (answers.date) {
+                resultHTML += `<p>📅 <span class="label">Когда:</span> ${formatDate(answers.date)} в ${answers.time || '—'}</p>`;
+            }
+
+            if (answers.massage) {
+                const massageText = answers.massage === 'да' ? '💆‍♀️ Да!' : answers.massage === 'нет' ? '❌ Нет' : '🤔 Может быть';
+                resultHTML += `<p>💆‍♀️ <span class="label">Массаж после свидания:</span> ${massageText}</p>`;
+            }
+
             card.innerHTML = resultHTML;
         }
 
@@ -438,58 +606,52 @@
             return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
         }
 
-        // ========== ОТПРАВКА В GOOGLE SHEETS ==========
-        async function sendToGoogleSheets(answers) {
-            try {
-                // Создаём строку параметров
-                const params = new URLSearchParams();
-                params.append('want', answers.want || '');
-                params.append('format', answers.format || '');
-                params.append('cuisine', answers.cuisine || '');
-                params.append('genre', answers.genre || '');
-                params.append('date', answers.date || '');
-                params.append('time', answers.time || '');
-
-                console.log('📤 Отправляем:', params.toString());
-
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: params.toString()
-                });
-
-                // Пытаемся прочитать ответ
-                const text = await response.text();
-                console.log('📥 Ответ скрипта:', text);
-
-                // Пытаемся распарсить как JSON
+        // ========== JSONP-ОТПРАВКА В GOOGLE SHEETS ==========
+        function sendToGoogleSheets(answers) {
+            return new Promise((resolve, reject) => {
                 try {
-                    const json = JSON.parse(text);
-                    if (json.success) {
-                        console.log('✅ Успешно!', json);
-                        return true;
-                    } else {
-                        console.error('❌ Ошибка:', json.error);
-                        alert('Ошибка: ' + json.error);
-                        return false;
-                    }
-                } catch(e) {
-                    // Если не JSON - просто показываем что пришло
-                    console.log('Ответ (не JSON):', text);
-                    if (text.includes('✅')) {
-                        return true;
-                    }
-                    alert('Ответ от сервера: ' + text.substring(0, 200));
-                    return false;
-                }
-
-            } catch (error) {
-                console.error('❌ Ошибка сети:', error);
-                alert('Ошибка соединения: ' + error.message);
-                return false;
-            }
+                    const callbackName = 'jsonp_callback_' + Date.now();
+                    
+                    window[callbackName] = function(response) {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        if (response.success) { resolve(true); } 
+                        else { reject(new Error(response.error || 'Ошибка')); }
+                    };
+                    
+                    const params = new URLSearchParams({
+                        want: answers.want || '',
+                        format: answers.format || '',
+                        cuisine: answers.cuisine || '',
+                        genre: answers.genre || '',
+                        date: answers.date || '',
+                        time: answers.time || '',
+                        massage: answers.massage || '',
+                        chefDish: answers.chefDish || '',
+                        isCustom: answers.isCustom ? 'да' : '',
+                        callback: callbackName
+                    });
+                    
+                    const url = GOOGLE_SCRIPT_URL + '?' + params.toString();
+                    const script = document.createElement('script');
+                    script.src = url;
+                    script.onerror = function() {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        reject(new Error('Ошибка загрузки'));
+                    };
+                    document.body.appendChild(script);
+                    
+                    setTimeout(() => {
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                            document.body.removeChild(script);
+                            reject(new Error('Таймаут'));
+                        }
+                    }, 15000);
+                    
+                } catch (error) { reject(error); }
+            });
         }
 
         // ========== СОХРАНЕНИЕ ==========
@@ -499,26 +661,33 @@
             saveBtn.textContent = '⏳ Отправка...';
             saveBtn.disabled = true;
 
-            const success = await sendToGoogleSheets(answers);
-
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
-
-            if (success) {
-                alert('✅ Свидание сохранено в Google Таблицу!');
-            } else {
-                alert('❌ Ошибка сохранения. Проверьте консоль (F12).');
+            try {
+                const success = await sendToGoogleSheets(answers);
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+                if (success) {
+                    alert('✅ Договорились! 💚');
+                }
+            } catch (error) {
+                saveBtn.textContent = originalText;
+                saveBtn.disabled = false;
+                console.error('❌ Ошибка:', error);
+                alert('❌ Ошибка: ' + error.message);
             }
         }
 
         // ========== СБРОС ==========
         function resetAll() {
-            if (confirm('Начать всё заново?')) {
+            if (confirm('Начать заново?')) {
                 answers = {};
                 noBtnAttempts = 0;
                 isNoButtonRunning = false;
+                document.getElementById('customPlaceInput').style.display = 'none';
+                document.querySelectorAll('#step2 .option-btn').forEach(btn => btn.style.opacity = '1');
+                document.getElementById('customPlace').value = '';
+                document.getElementById('chefDish').value = '';
                 document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-                document.getElementById('step0').classList.add('active');
+                document.getElementById('step1').classList.add('active');
                 showNoButton();
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
