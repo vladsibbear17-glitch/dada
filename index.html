@@ -154,9 +154,6 @@
             border-radius: 16px;
             border: 1px solid rgba(0, 255, 136, 0.1);
         }
-        .detail-input.show {
-            display: block;
-        }
         @media (max-width: 500px) {
             #app { padding: 25px 20px; }
             .options { grid-template-columns: 1fr 1fr; }
@@ -192,7 +189,7 @@
                 <button class="option-btn" onclick="selectFormat('Шеф Владик')" style="border-color:#ffaa00; color:#ffcc44; grid-column: span 2;">👨‍🍳 Шеф Владик</button>
             </div>
             
-            <!-- Поле для ввода деталей -->
+            <!-- Поле для ввода деталей (ПОКАЗЫВАЕТСЯ ТОЛЬКО ДЛЯ ШЕФ ВЛАДИК И ДРУГОЕ) -->
             <div id="detailBlock" class="detail-input" style="display:none;">
                 <div class="form-group">
                     <label id="detailLabel">Что приготовить? 🍳</label>
@@ -220,7 +217,6 @@
     // ====== ДАННЫЕ ======
     let answers = {};
     let noBtnAttempts = 0;
-    let selectedFormat = '';
 
     // ====== НАВИГАЦИЯ ======
     function goTo(step) {
@@ -233,42 +229,52 @@
 
     // ====== ВЫБОР ФОРМАТА ======
     function selectFormat(format) {
-        selectedFormat = format;
         answers.format = format;
         
-        // Показываем поле для ввода если нужно
         const detailBlock = document.getElementById('detailBlock');
         const detailInput = document.getElementById('detailInput');
         const detailLabel = document.getElementById('detailLabel');
         
+        // Если выбрали Шеф Владик или Другое - показываем поле для ввода
         if (format === 'Шеф Владик') {
             detailBlock.style.display = 'block';
             detailLabel.textContent = '🍳 Какое блюдо приготовить?';
             detailInput.placeholder = 'Например: Спагетти карбонара, Пицца...';
             detailInput.value = '';
             detailInput.focus();
+            // НЕ переходим на шаг 3, ждем пока введут текст
         } else if (format === 'Другое') {
             detailBlock.style.display = 'block';
             detailLabel.textContent = '📍 Какое место ты хочешь?';
             detailInput.placeholder = 'Напиши куда хочешь пойти...';
             detailInput.value = '';
             detailInput.focus();
+            // НЕ переходим на шаг 3, ждем пока введут текст
         } else {
+            // Для обычных форматов скрываем поле и переходим к результату
             detailBlock.style.display = 'none';
-            // Для обычных форматов сразу переходим к результату
             goTo(3);
         }
     }
 
     // ====== СОХРАНИТЬ ДЕТАЛИ ======
     function saveDetail() {
-        const detail = document.getElementById('detailInput').value.trim();
+        const detailInput = document.getElementById('detailInput');
+        const detail = detailInput.value.trim();
+        
         if (!detail) {
             alert('Пожалуйста, напиши детали!');
+            detailInput.focus();
             return;
         }
+        
+        // Сохраняем детали
         answers.detail = detail;
+        
+        // Скрываем поле
         document.getElementById('detailBlock').style.display = 'none';
+        
+        // Переходим к результату
         goTo(3);
     }
 
@@ -338,12 +344,16 @@
         try {
             // ✅ ОТПРАВЛЯЕМ 4 ПОЛЯ:
             const params = new URLSearchParams();
-            params.append('want', answers.want || '');        // 1
-            params.append('format', answers.format || '');    // 2
-            params.append('custom', answers.custom || '');    // 3
-            params.append('detail', answers.detail || '');    // 4 - НОВОЕ ПОЛЕ!
+            params.append('want', answers.want || '');
+            params.append('format', answers.format || '');
+            params.append('custom', answers.custom || '');
+            params.append('detail', answers.detail || '');  // ВАЖНО!
 
-            console.log('📤 Отправка:', params.toString());
+            console.log('📤 Отправка данных:');
+            console.log('  want:', answers.want);
+            console.log('  format:', answers.format);
+            console.log('  detail:', answers.detail);
+            console.log('  Полный запрос:', params.toString());
 
             const response = await fetch(GOOGLE_URL, {
                 method: 'POST',
@@ -352,7 +362,7 @@
             });
 
             const text = await response.text();
-            console.log('📥 Ответ:', text);
+            console.log('📥 Ответ сервера:', text);
             
             let result;
             try {
@@ -381,7 +391,6 @@
         if (!confirm('Начать заново?')) return;
         answers = {};
         noBtnAttempts = 0;
-        selectedFormat = '';
         document.getElementById('detailBlock').style.display = 'none';
         document.getElementById('detailInput').value = '';
         document.getElementById('noBtn').style.display = 'block';
