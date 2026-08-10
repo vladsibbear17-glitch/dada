@@ -152,29 +152,29 @@
 <body>
 <div class="container">
     <div id="app">
-        <!-- Шаг 1 -->
+        <!-- Шаг 1: Хочет -->
         <div id="step1" class="step active">
             <div style="text-align:center; font-size:60px; margin-bottom:15px;">💚</div>
             <h2>Ренатик, ты пойдешь со мной на свидание?</h2>
             <div class="options">
                 <button class="option-btn" onclick="save('want','да',2)" style="border-color:#00aa44; color:#88ff88;">💚 Да!</button>
-                <button class="option-btn" id="noBtn">❌ Нет</button>
+                <button class="option-btn" id="noBtn" onclick="save('want','нет',2)">❌ Нет</button>
             </div>
         </div>
 
         <!-- Шаг 2: Формат -->
         <div id="step2" class="step">
-            <div class="progress-bar"><div class="progress" style="width:20%"></div></div>
-            <span class="step-num">ШАГ 1</span>
+            <div class="progress-bar"><div class="progress" style="width:50%"></div></div>
+            <span class="step-num">ШАГ 2</span>
             <h2>Что бы ты хотела? 🎯</h2>
             <div class="options">
                 <button class="option-btn" onclick="save('format','Ресторан',3)">🍽 Ресторан</button>
-                <button class="option-btn" onclick="save('format','Кино',4)">🎬 Кино</button>
-                <button class="option-btn" onclick="save('format','Парк',6)">🌳 Парк</button>
+                <button class="option-btn" onclick="save('format','Кино',3)">🎬 Кино</button>
+                <button class="option-btn" onclick="save('format','Парк',3)">🌳 Парк</button>
                 <button class="option-btn" onclick="save('format','Кафе',3)">☕ Кафе</button>
-                <button class="option-btn" onclick="save('format','Квест',6)">🔐 Квест</button>
+                <button class="option-btn" onclick="save('format','Квест',3)">🔐 Квест</button>
                 <button class="option-btn" onclick="showCustom()">✏️ Другое</button>
-                <button class="option-btn" onclick="save('format','Шеф Владик',5)" style="border-color:#ffaa00; color:#ffcc44;">👨‍🍳 Шеф Владик</button>
+                <button class="option-btn" onclick="save('format','Шеф Владик',3)" style="border-color:#ffaa00; color:#ffcc44;">👨‍🍳 Шеф Владик</button>
             </div>
             <div id="customInput" style="display:none; margin-top:15px;">
                 <div class="form-group">
@@ -185,79 +185,8 @@
             </div>
         </div>
 
-        <!-- Шаг 3: Кухня -->
+        <!-- Шаг 3: Результат -->
         <div id="step3" class="step">
-            <div class="progress-bar"><div class="progress" style="width:40%"></div></div>
-            <span class="step-num">ШАГ 2</span>
-            <h2>Какая кухня? 🍜</h2>
-            <div class="options" style="grid-template-columns:1fr 1fr 1fr;">
-                <button class="option-btn" onclick="save('cuisine','Итальянская',6)">🇮🇹 Итальянская</button>
-                <button class="option-btn" onclick="save('cuisine','Японская',6)">🇯🇵 Японская</button>
-                <button class="option-btn" onclick="save('cuisine','Китайская',6)">🇨🇳 Китайская</button>
-                <button class="option-btn" onclick="save('cuisine','Французская',6)">🇫🇷 Французская</button>
-                <button class="option-btn" onclick="save('cuisine','Мексиканская',6)">🇲🇽 Мексиканская</button>
-                <button class="option-btn" onclick="save('cuisine','Русская',6)">🇷🇺 Русская</button>
-                <button class="option-btn" onclick="save('cuisine','Любая',6)" style="grid-column:span 3;">😋 Любая</button>
-            </div>
-        </div>
-
-        <!-- Шаг 4: Жанр кино -->
-        <div id="step4" class="step">
-            <div class="progress-bar"><div class="progress" style="width:50%"></div></div>
-            <span class="step-num">ШАГ 2</span>
-            <h2>Какой жанр кино? 🎬</h2>
-            <div class="options">
-                <button class="option-btn" onclick="save('genre','Романтика',6)">💕 Романтика</button>
-                <button class="option-btn" onclick="save('genre','Комедия',6)">😂 Комедия</button>
-                <button class="option-btn" onclick="save('genre','Ужасы',6)">👻 Ужасы</button>
-                <button class="option-btn" onclick="save('genre','Драма',6)">🎭 Драма</button>
-                <button class="option-btn" onclick="save('genre','Фантастика',6)">🚀 Фантастика</button>
-                <button class="option-btn" onclick="save('genre','Любой',6)">🎥 Любой</button>
-            </div>
-        </div>
-
-        <!-- Шаг 5: Блюдо для Шефа -->
-        <div id="step5" class="step">
-            <div class="progress-bar"><div class="progress" style="width:60%"></div></div>
-            <span class="step-num">ШАГ 2</span>
-            <h2>👨‍🍳 Какое блюдо приготовить?</h2>
-            <div class="form-group">
-                <label>Твоё желаемое блюдо:</label>
-                <input type="text" id="chefDish" placeholder="Например: Спагетти карбонара...">
-                <button class="btn-primary" onclick="saveChef()">✅ Готово!</button>
-            </div>
-        </div>
-
-        <!-- Шаг 6: Дата/время -->
-        <div id="step6" class="step">
-            <div class="progress-bar"><div class="progress" style="width:75%"></div></div>
-            <span class="step-num">ШАГ 3</span>
-            <h2>Когда удобно? 📅</h2>
-            <div class="form-group">
-                <label>Дата:</label>
-                <input type="date" id="dateInput">
-            </div>
-            <div class="form-group">
-                <label>Время:</label>
-                <input type="time" id="timeInput" value="19:00">
-            </div>
-            <button class="btn-primary" onclick="saveDateTime()">✨ Дальше</button>
-        </div>
-
-        <!-- Шаг 7: Массаж -->
-        <div id="step7" class="step">
-            <div class="progress-bar"><div class="progress" style="width:90%"></div></div>
-            <span class="step-num">ШАГ 4</span>
-            <h2>💆‍♀️ Хочешь массаж после свидания?</h2>
-            <div class="options">
-                <button class="option-btn" onclick="save('massage','Да',8)" style="border-color:#00aa44; color:#88ff88;">💚 Да!</button>
-                <button class="option-btn" onclick="save('massage','Нет',8)" style="border-color:#4a2a2a; color:#ff6666;">❌ Нет</button>
-                <button class="option-btn" onclick="save('massage','Может быть',8)" style="grid-column:span 2;">🤔 Может быть</button>
-            </div>
-        </div>
-
-        <!-- Шаг 8: Результат -->
-        <div id="step8" class="step">
             <div style="text-align:center; font-size:60px;">💚</div>
             <h2 style="color:#00ff88;">Договорились!</h2>
             <div id="resultCard" class="result-card"></div>
@@ -281,16 +210,12 @@
         document.getElementById('step' + step).classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if (step !== 1) hideNoButton();
+        if (step === 3) showResult();
     }
 
     // ====== СОХРАНИТЬ ОТВЕТ ======
     function save(key, value, next) {
         answers[key] = value;
-        if (key === 'format' && value === 'Ресторан') { goTo(3); return; }
-        if (key === 'format' && value === 'Кафе') { goTo(3); return; }
-        if (key === 'format' && value === 'Кино') { goTo(4); return; }
-        if (key === 'format' && value === 'Шеф Владик') { goTo(5); return; }
-        if (key === 'format' && (value === 'Парк' || value === 'Квест')) { goTo(6); return; }
         goTo(next);
     }
 
@@ -305,26 +230,7 @@
         answers.format = 'Другое';
         answers.custom = val;
         document.getElementById('customInput').style.display = 'none';
-        goTo(6);
-    }
-
-    // ====== ШЕФ ВЛАДИК ======
-    function saveChef() {
-        const dish = document.getElementById('chefDish').value.trim();
-        if (!dish) { alert('Напиши блюдо!'); return; }
-        answers.chefDish = dish;
-        goTo(6);
-    }
-
-    // ====== ДАТА/ВРЕМЯ ======
-    function saveDateTime() {
-        const date = document.getElementById('dateInput').value;
-        const time = document.getElementById('timeInput').value;
-        if (!date) { alert('Выбери дату!'); return; }
-        answers.date = date;
-        answers.time = time;
-        showResult();
-        goTo(7);
+        goTo(3);
     }
 
     // ====== РЕЗУЛЬТАТ ======
@@ -334,19 +240,9 @@
         
         if (answers.want === 'да') html += `<p>💚 <span class="label">Ренатик сказала ДА!</span></p>`;
         else if (answers.want === 'нет') html += `<p>❌ <span class="label">Ренатик сказала НЕТ...</span></p>`;
-        else html += `<p>🤔 <span class="label">Ренатик думает...</span></p>`;
-
+        
         if (answers.format) html += `<p>📍 <span class="label">Формат:</span> ${answers.format}</p>`;
         if (answers.custom) html += `<p>✏️ <span class="label">Свой вариант:</span> ${answers.custom}</p>`;
-        if (answers.chefDish) html += `<p>👨‍🍳 <span class="label">Владик приготовит:</span> ${answers.chefDish}</p>`;
-        if (answers.cuisine && answers.cuisine !== 'Любая') html += `<p>🍽 <span class="label">Кухня:</span> ${answers.cuisine}</p>`;
-        if (answers.genre && answers.genre !== 'Любой') html += `<p>🎬 <span class="label">Жанр:</span> ${answers.genre}</p>`;
-        if (answers.date) {
-            const dateObj = new Date(answers.date + 'T00:00:00');
-            const formattedDate = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-            html += `<p>📅 <span class="label">Когда:</span> ${formattedDate} в ${answers.time}</p>`;
-        }
-        if (answers.massage) html += `<p>💆 <span class="label">Массаж:</span> ${answers.massage}</p>`;
 
         card.innerHTML = html || '<p>Нет данных</p>';
     }
@@ -382,35 +278,20 @@
         if (btn) btn.style.display = 'none';
     }
 
-    // ====== ОТПРАВКА ======
+    // ====== ОТПРАВКА - ТОЛЬКО 3 ПОЛЯ ======
     async function sendData() {
-        const btn = document.querySelector('#step8 .btn-primary');
+        const btn = document.querySelector('#step3 .btn-primary');
         btn.textContent = '⏳ Отправка...';
         btn.disabled = true;
 
         try {
-            // ✅ ПОРЯДОК ДОЛЖЕН СОВПАДАТЬ С ПОРЯДКОМ В GAS!
+            // ✅ ОТПРАВЛЯЕМ ТОЛЬКО 3 ПОЛЯ:
             const params = new URLSearchParams();
-            params.append('want', answers.want || '');
-            params.append('format', answers.format || '');
-            params.append('custom', answers.custom || '');
-            params.append('cuisine', answers.cuisine || '');
-            params.append('genre', answers.genre || '');
-            params.append('chefDish', answers.chefDish || '');
-            params.append('date', answers.date || '');
-            params.append('time', answers.time || '');
-            params.append('massage', answers.massage || '');
+            params.append('want', answers.want || '');        // 1
+            params.append('format', answers.format || '');    // 2
+            params.append('custom', answers.custom || '');    // 3
 
-            console.log('📤 Отправка данных:');
-            console.log('  want:', answers.want || 'пусто');
-            console.log('  format:', answers.format || 'пусто');
-            console.log('  custom:', answers.custom || 'пусто');
-            console.log('  cuisine:', answers.cuisine || 'пусто');
-            console.log('  genre:', answers.genre || 'пусто');
-            console.log('  chefDish:', answers.chefDish || 'пусто');
-            console.log('  date:', answers.date || 'пусто');
-            console.log('  time:', answers.time || 'пусто');
-            console.log('  massage:', answers.massage || 'пусто');
+            console.log('📤 Отправка:', params.toString());
 
             const response = await fetch(GOOGLE_URL, {
                 method: 'POST',
@@ -450,7 +331,6 @@
         noBtnAttempts = 0;
         document.getElementById('customInput').style.display = 'none';
         document.getElementById('customPlace').value = '';
-        document.getElementById('chefDish').value = '';
         document.getElementById('noBtn').style.display = 'block';
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
         document.getElementById('step1').classList.add('active');
@@ -459,9 +339,6 @@
 
     // ====== ЗАПУСК ======
     document.addEventListener('DOMContentLoaded', () => {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('dateInput').min = today;
-        document.getElementById('dateInput').value = today;
         initNoButton();
     });
 </script>
