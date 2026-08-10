@@ -70,6 +70,10 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 40px rgba(0, 255, 136, 0.2);
         }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         .btn-secondary {
             width: 100%;
             padding: 18px;
@@ -154,6 +158,21 @@
             border-radius: 16px;
             border: 1px solid rgba(0, 255, 136, 0.1);
         }
+        .detail-input.hidden {
+            display: none !important;
+        }
+        .detail-input.show {
+            display: block !important;
+        }
+        .error-text {
+            color: #ff6b6b;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        .error-text.show {
+            display: block;
+        }
         @media (max-width: 500px) {
             #app { padding: 25px 20px; }
             .options { grid-template-columns: 1fr 1fr; }
@@ -189,11 +208,12 @@
                 <button class="option-btn" onclick="selectFormat('Шеф Владик')" style="border-color:#ffaa00; color:#ffcc44; grid-column: span 2;">👨‍🍳 Шеф Владик</button>
             </div>
             
-            <!-- Поле для ввода деталей (ПОКАЗЫВАЕТСЯ ТОЛЬКО ДЛЯ ШЕФ ВЛАДИК И ДРУГОЕ) -->
-            <div id="detailBlock" class="detail-input" style="display:none;">
+            <!-- Поле для ввода деталей -->
+            <div id="detailBlock" class="detail-input hidden">
                 <div class="form-group">
                     <label id="detailLabel">Что приготовить? 🍳</label>
                     <input type="text" id="detailInput" placeholder="Напиши детали...">
+                    <div id="detailError" class="error-text">❌ Пожалуйста, напиши детали!</div>
                     <button class="btn-primary" onclick="saveDetail()">✅ Готово!</button>
                 </div>
             </div>
@@ -204,7 +224,7 @@
             <div style="text-align:center; font-size:60px;">💚</div>
             <h2 style="color:#00ff88;">Договорились!</h2>
             <div id="resultCard" class="result-card"></div>
-            <button class="btn-primary" onclick="sendData()">💾 Сохранить</button>
+            <button class="btn-primary" id="saveBtn" onclick="sendData()">💾 Сохранить</button>
             <button class="btn-secondary" onclick="resetAll()">🔄 Начать заново</button>
         </div>
     </div>
@@ -212,16 +232,25 @@
 
 <script>
     // ====== НАСТРОЙКИ ======
+    // ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ!
     const GOOGLE_URL = 'https://script.google.com/macros/s/AKfycbzKTwVmL2yv17X7dF0hRD5sSS8PYyhoeT2KljbS74zoLElFPCcLPwDwq5qDSpjVh-WInQ/exec';
 
     // ====== ДАННЫЕ ======
-    let answers = {};
+    let answers = {
+        want: '',
+        format: '',
+        custom: '',
+        detail: ''
+    };
     let noBtnAttempts = 0;
 
     // ====== НАВИГАЦИЯ ======
     function goTo(step) {
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
-        document.getElementById('step' + step).classList.add('active');
+        const targetStep = document.getElementById('step' + step);
+        if (targetStep) {
+            targetStep.classList.add('active');
+        }
         window.scrollTo({ top: 0, behavior: 'smooth' });
         if (step !== 1) hideNoButton();
         if (step === 3) showResult();
@@ -229,30 +258,32 @@
 
     // ====== ВЫБОР ФОРМАТА ======
     function selectFormat(format) {
+        // СОХРАНЯЕМ ФОРМАТ
         answers.format = format;
         
         const detailBlock = document.getElementById('detailBlock');
         const detailInput = document.getElementById('detailInput');
         const detailLabel = document.getElementById('detailLabel');
+        const detailError = document.getElementById('detailError');
         
-        // Если выбрали Шеф Владик или Другое - показываем поле для ввода
+        // Скрываем ошибку
+        detailError.classList.remove('show');
+        
         if (format === 'Шеф Владик') {
-            detailBlock.style.display = 'block';
+            detailBlock.className = 'detail-input show';
             detailLabel.textContent = '🍳 Какое блюдо приготовить?';
             detailInput.placeholder = 'Например: Спагетти карбонара, Пицца...';
             detailInput.value = '';
-            detailInput.focus();
-            // НЕ переходим на шаг 3, ждем пока введут текст
+            setTimeout(() => detailInput.focus(), 100);
         } else if (format === 'Другое') {
-            detailBlock.style.display = 'block';
+            detailBlock.className = 'detail-input show';
             detailLabel.textContent = '📍 Какое место ты хочешь?';
             detailInput.placeholder = 'Напиши куда хочешь пойти...';
             detailInput.value = '';
-            detailInput.focus();
-            // НЕ переходим на шаг 3, ждем пока введут текст
+            setTimeout(() => detailInput.focus(), 100);
         } else {
-            // Для обычных форматов скрываем поле и переходим к результату
-            detailBlock.style.display = 'none';
+            detailBlock.className = 'detail-input hidden';
+            // Для обычных форматов сразу переходим к результату
             goTo(3);
         }
     }
@@ -260,19 +291,26 @@
     // ====== СОХРАНИТЬ ДЕТАЛИ ======
     function saveDetail() {
         const detailInput = document.getElementById('detailInput');
+        const detailError = document.getElementById('detailError');
         const detail = detailInput.value.trim();
         
+        // Скрываем ошибку
+        detailError.classList.remove('show');
+        
         if (!detail) {
-            alert('Пожалуйста, напиши детали!');
+            detailError.classList.add('show');
             detailInput.focus();
             return;
         }
         
-        // Сохраняем детали
+        // ✅ СОХРАНЯЕМ ДЕТАЛИ
         answers.detail = detail;
         
+        console.log('✅ Сохранено в answers.detail:', answers.detail);
+        console.log('📦 Все answers:', answers);
+        
         // Скрываем поле
-        document.getElementById('detailBlock').style.display = 'none';
+        document.getElementById('detailBlock').className = 'detail-input hidden';
         
         // Переходим к результату
         goTo(3);
@@ -281,6 +319,7 @@
     // ====== СОХРАНИТЬ ОТВЕТ ======
     function save(key, value, next) {
         answers[key] = value;
+        console.log('💾 Сохранено:', key, '=', value);
         goTo(next);
     }
 
@@ -289,8 +328,11 @@
         const card = document.getElementById('resultCard');
         let html = '';
         
-        if (answers.want === 'да') html += `<p>💚 <span class="label">Ренатик сказала ДА!</span></p>`;
-        else if (answers.want === 'нет') html += `<p>❌ <span class="label">Ренатик сказала НЕТ...</span></p>`;
+        if (answers.want === 'да') {
+            html += `<p>💚 <span class="label">Ренатик сказала ДА!</span></p>`;
+        } else if (answers.want === 'нет') {
+            html += `<p>❌ <span class="label">Ренатик сказала НЕТ...</span></p>`;
+        }
         
         if (answers.format) {
             html += `<p>📍 <span class="label">Формат:</span> ${answers.format}</p>`;
@@ -302,12 +344,15 @@
         }
 
         card.innerHTML = html || '<p>Нет данных</p>';
+        
+        console.log('📋 Результат:', answers);
     }
 
     // ====== КНОПКА "НЕТ" УБЕГАЕТ ======
     function initNoButton() {
         const btn = document.getElementById('noBtn');
         if (!btn) return;
+        
         btn.addEventListener('mouseenter', function(e) {
             if (noBtnAttempts > 8) {
                 btn.textContent = '😅 Ладно, нажми';
@@ -337,27 +382,39 @@
 
     // ====== ОТПРАВКА ======
     async function sendData() {
-        const btn = document.querySelector('#step3 .btn-primary');
+        const btn = document.getElementById('saveBtn');
+        const originalText = btn.textContent;
         btn.textContent = '⏳ Отправка...';
         btn.disabled = true;
 
         try {
-            // ✅ ОТПРАВЛЯЕМ 4 ПОЛЯ:
+            // Проверяем, есть ли данные
+            if (!answers.want) {
+                alert('❌ Нет данных для отправки!');
+                btn.textContent = originalText;
+                btn.disabled = false;
+                return;
+            }
+
+            // ✅ ОТПРАВЛЯЕМ 4 ПОЛЯ В ПРАВИЛЬНОМ ПОРЯДКЕ
             const params = new URLSearchParams();
             params.append('want', answers.want || '');
             params.append('format', answers.format || '');
             params.append('custom', answers.custom || '');
-            params.append('detail', answers.detail || '');  // ВАЖНО!
+            params.append('detail', answers.detail || '');
 
-            console.log('📤 Отправка данных:');
+            console.log('📤 ОТПРАВКА ДАННЫХ:');
             console.log('  want:', answers.want);
             console.log('  format:', answers.format);
+            console.log('  custom:', answers.custom);
             console.log('  detail:', answers.detail);
             console.log('  Полный запрос:', params.toString());
 
             const response = await fetch(GOOGLE_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
                 body: params.toString()
             });
 
@@ -382,27 +439,69 @@
             alert('❌ Ошибка: ' + e.message);
         }
 
-        btn.textContent = '💾 Сохранить';
+        btn.textContent = originalText;
         btn.disabled = false;
     }
 
     // ====== СБРОС ======
     function resetAll() {
         if (!confirm('Начать заново?')) return;
-        answers = {};
+        
+        // Сбрасываем данные
+        answers = {
+            want: '',
+            format: '',
+            custom: '',
+            detail: ''
+        };
         noBtnAttempts = 0;
-        document.getElementById('detailBlock').style.display = 'none';
+        
+        // Скрываем поле ввода
+        document.getElementById('detailBlock').className = 'detail-input hidden';
         document.getElementById('detailInput').value = '';
-        document.getElementById('noBtn').style.display = 'block';
+        document.getElementById('detailError').classList.remove('show');
+        
+        // Показываем кнопку "Нет"
+        const noBtn = document.getElementById('noBtn');
+        if (noBtn) {
+            noBtn.style.display = 'block';
+            noBtn.textContent = '❌ Нет';
+            noBtn.onclick = function() { save('want','нет',3); };
+        }
+        
+        // Переходим на первый шаг
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
         document.getElementById('step1').classList.add('active');
         window.scrollTo({ top: 0 });
+        
+        console.log('🔄 Сброс выполнен');
     }
 
-    // ====== ЗАПУСК ======
-    document.addEventListener('DOMContentLoaded', () => {
+    // ====== ОБРАБОТКА ENTER ======
+    document.addEventListener('DOMContentLoaded', function() {
         initNoButton();
+        
+        // Обработка нажатия Enter в поле ввода
+        const detailInput = document.getElementById('detailInput');
+        if (detailInput) {
+            detailInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveDetail();
+                }
+            });
+        }
+        
+        console.log('🚀 Приложение загружено!');
+        console.log('📌 Используйте консоль для отладки');
     });
+
+    // ====== ОБРАБОТКА ОШИБОК ======
+    window.onerror = function(msg, url, line, col, error) {
+        console.error('❌ Глобальная ошибка:', msg, error);
+        alert('⚠️ Произошла ошибка: ' + msg);
+        return true;
+    };
 </script>
 </body>
 </html>
