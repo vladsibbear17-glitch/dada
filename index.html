@@ -331,6 +331,7 @@
     function showResult() {
         const card = document.getElementById('resultCard');
         let html = '';
+        
         if (answers.want === 'да') html += `<p>💚 <span class="label">Ренатик сказала ДА!</span></p>`;
         else if (answers.want === 'нет') html += `<p>❌ <span class="label">Ренатик сказала НЕТ...</span></p>`;
         else html += `<p>🤔 <span class="label">Ренатик думает...</span></p>`;
@@ -340,10 +341,14 @@
         if (answers.chefDish) html += `<p>👨‍🍳 <span class="label">Владик приготовит:</span> ${answers.chefDish}</p>`;
         if (answers.cuisine && answers.cuisine !== 'Любая') html += `<p>🍽 <span class="label">Кухня:</span> ${answers.cuisine}</p>`;
         if (answers.genre && answers.genre !== 'Любой') html += `<p>🎬 <span class="label">Жанр:</span> ${answers.genre}</p>`;
-        if (answers.date) html += `<p>📅 <span class="label">Когда:</span> ${formatDate(answers.date)} в ${answers.time}</p>`;
+        if (answers.date) {
+            const dateObj = new Date(answers.date + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            html += `<p>📅 <span class="label">Когда:</span> ${formattedDate} в ${answers.time}</p>`;
+        }
         if (answers.massage) html += `<p>💆 <span class="label">Массаж:</span> ${answers.massage}</p>`;
 
-        card.innerHTML = html;
+        card.innerHTML = html || '<p>Нет данных</p>';
     }
 
     function formatDate(d) {
@@ -412,10 +417,18 @@
             const text = await response.text();
             console.log('📥 Ответ:', text);
             
-            if (text.includes('success')) {
+            // Парсим ответ
+            let result;
+            try {
+                result = JSON.parse(text);
+            } catch(e) {
+                result = { success: false, error: text };
+            }
+            
+            if (result.success) {
                 alert('✅ Данные сохранены!');
             } else {
-                alert('❌ Ошибка: ' + text);
+                alert('❌ Ошибка: ' + (result.error || 'Неизвестная ошибка'));
             }
 
         } catch(e) {
