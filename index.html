@@ -173,15 +173,6 @@
         .error-text.show {
             display: block;
         }
-        .custom-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
-        }
-        .custom-row .option-btn {
-            grid-column: span 1;
-        }
         @media (max-width: 500px) {
             #app { padding: 25px 20px; }
             .options { grid-template-columns: 1fr 1fr; }
@@ -213,28 +204,17 @@
                 <button class="option-btn" onclick="selectFormat('Парк')">🌳 Парк</button>
                 <button class="option-btn" onclick="selectFormat('Кафе')">☕ Кафе</button>
                 <button class="option-btn" onclick="selectFormat('Квест')">🔐 Квест</button>
-                <!-- Кнопка "Другое" теперь отдельная и независимая -->
-                <button class="option-btn" onclick="showCustomInput()" style="grid-column: span 2; border-color: #ffaa00; color: #ffcc44;">✏️ Другое</button>
+                <button class="option-btn" onclick="selectFormat('Другое')" style="border-color:#ffaa00; color:#ffcc44;">✏️ Другое</button>
                 <button class="option-btn" onclick="selectFormat('Шеф Владик')" style="border-color:#ffaa00; color:#ffcc44; grid-column: span 2;">👨‍🍳 Шеф Владик</button>
             </div>
             
-            <!-- Поле для "Другое" (независимое) -->
-            <div id="customBlock" class="detail-input hidden">
+            <!-- Поле для ввода деталей (показывается только для Шеф Владик и Другое) -->
+            <div id="detailBlock" class="detail-input hidden">
                 <div class="form-group">
-                    <label>📍 Напиши свой вариант:</label>
-                    <input type="text" id="customInput" placeholder="Например: Итальянский ресторан, Прогулка по городу...">
-                    <div id="customError" class="error-text">❌ Пожалуйста, напиши свой вариант!</div>
-                    <button class="btn-primary" onclick="saveCustom()">✅ Готово!</button>
-                </div>
-            </div>
-
-            <!-- Поле для "Шеф Владик" -->
-            <div id="chefBlock" class="detail-input hidden">
-                <div class="form-group">
-                    <label>🍳 Какое блюдо приготовить?</label>
-                    <input type="text" id="chefInput" placeholder="Например: Спагетти карбонара, Пицца...">
-                    <div id="chefError" class="error-text">❌ Пожалуйста, напиши блюдо!</div>
-                    <button class="btn-primary" onclick="saveChef()">✅ Готово!</button>
+                    <label id="detailLabel">Что приготовить? 🍳</label>
+                    <input type="text" id="detailInput" placeholder="Напиши детали...">
+                    <div id="detailError" class="error-text">❌ Пожалуйста, напиши детали!</div>
+                    <button class="btn-primary" onclick="saveDetail()">✅ Готово!</button>
                 </div>
             </div>
         </div>
@@ -252,15 +232,13 @@
 
 <script>
     // ====== НАСТРОЙКИ ======
-    // ЗАМЕНИТЕ ЭТУ ССЫЛКУ НА ВАШУ!
     const GOOGLE_URL = 'https://script.google.com/macros/s/AKfycbzKTwVmL2yv17X7dF0hRD5sSS8PYyhoeT2KljbS74zoLElFPCcLPwDwq5qDSpjVh-WInQ/exec';
 
     // ====== ДАННЫЕ ======
     let answers = {
-        want: '',
-        format: '',
-        custom: '',    // для "Другое"
-        detail: ''     // для "Шеф Владик"
+        want: '',      // да/нет
+        format: '',    // Ресторан/Кино/Парк/Кафе/Квест/Другое/Шеф Владик
+        detail: ''     // То что она написала (блюдо или место)
     };
     let noBtnAttempts = 0;
 
@@ -276,89 +254,64 @@
         if (step === 3) showResult();
     }
 
-    // ====== ВЫБОР ФОРМАТА (для кнопок) ======
+    // ====== ВЫБОР ФОРМАТА ======
     function selectFormat(format) {
+        // СОХРАНЯЕМ ФОРМАТ
         answers.format = format;
         
-        // Скрываем все поля
-        document.getElementById('customBlock').className = 'detail-input hidden';
-        document.getElementById('chefBlock').className = 'detail-input hidden';
+        const detailBlock = document.getElementById('detailBlock');
+        const detailInput = document.getElementById('detailInput');
+        const detailLabel = document.getElementById('detailLabel');
+        const detailError = document.getElementById('detailError');
         
-        // Если выбрали "Шеф Владик" - показываем поле для блюда
+        // Скрываем ошибку
+        detailError.classList.remove('show');
+        
+        // Если выбрали "Шеф Владик" или "Другое" - показываем поле для ввода
         if (format === 'Шеф Владик') {
-            const chefBlock = document.getElementById('chefBlock');
-            chefBlock.className = 'detail-input show';
-            const chefInput = document.getElementById('chefInput');
-            chefInput.value = '';
-            setTimeout(() => chefInput.focus(), 100);
+            detailBlock.className = 'detail-input show';
+            detailLabel.textContent = '🍳 Какое блюдо приготовить?';
+            detailInput.placeholder = 'Например: Спагетти карбонара, Пицца...';
+            detailInput.value = '';
+            setTimeout(() => detailInput.focus(), 100);
+        } else if (format === 'Другое') {
+            detailBlock.className = 'detail-input show';
+            detailLabel.textContent = '📍 Какое место ты хочешь?';
+            detailInput.placeholder = 'Напиши куда хочешь пойти...';
+            detailInput.value = '';
+            setTimeout(() => detailInput.focus(), 100);
         } else {
-            // Для обычных форматов сразу переходим к результату
+            // Для обычных форматов скрываем поле и переходим к результату
+            detailBlock.className = 'detail-input hidden';
             goTo(3);
         }
     }
 
-    // ====== ПОКАЗАТЬ ПОЛЕ ДЛЯ "ДРУГОЕ" ======
-    function showCustomInput() {
-        // Сохраняем формат как "Другое"
-        answers.format = 'Другое';
+    // ====== СОХРАНИТЬ ДЕТАЛИ ======
+    function saveDetail() {
+        const detailInput = document.getElementById('detailInput');
+        const detailError = document.getElementById('detailError');
+        const detail = detailInput.value.trim();
         
-        // Скрываем все поля
-        document.getElementById('customBlock').className = 'detail-input hidden';
-        document.getElementById('chefBlock').className = 'detail-input hidden';
+        // Скрываем ошибку
+        detailError.classList.remove('show');
         
-        // Показываем поле для "Другое"
-        const customBlock = document.getElementById('customBlock');
-        customBlock.className = 'detail-input show';
-        const customInput = document.getElementById('customInput');
-        customInput.value = '';
-        setTimeout(() => customInput.focus(), 100);
-    }
-
-    // ====== СОХРАНИТЬ "ДРУГОЕ" ======
-    function saveCustom() {
-        const customInput = document.getElementById('customInput');
-        const customError = document.getElementById('customError');
-        const value = customInput.value.trim();
-        
-        customError.classList.remove('show');
-        
-        if (!value) {
-            customError.classList.add('show');
-            customInput.focus();
+        if (!detail) {
+            detailError.classList.add('show');
+            detailInput.focus();
             return;
         }
         
-        // ✅ СОХРАНЯЕМ В custom
-        answers.custom = value;
-        
-        console.log('✅ Сохранено в answers.custom:', answers.custom);
-        console.log('📦 Все answers:', answers);
-        
-        document.getElementById('customBlock').className = 'detail-input hidden';
-        goTo(3);
-    }
-
-    // ====== СОХРАНИТЬ "ШЕФ ВЛАДИК" ======
-    function saveChef() {
-        const chefInput = document.getElementById('chefInput');
-        const chefError = document.getElementById('chefError');
-        const value = chefInput.value.trim();
-        
-        chefError.classList.remove('show');
-        
-        if (!value) {
-            chefError.classList.add('show');
-            chefInput.focus();
-            return;
-        }
-        
-        // ✅ СОХРАНЯЕМ В detail
-        answers.detail = value;
+        // ✅ СОХРАНЯЕМ ДЕТАЛИ
+        answers.detail = detail;
         
         console.log('✅ Сохранено в answers.detail:', answers.detail);
         console.log('📦 Все answers:', answers);
         
-        document.getElementById('chefBlock').className = 'detail-input hidden';
+        // Скрываем поле
+        document.getElementById('detailBlock').className = 'detail-input hidden';
+        
+        // Переходим к результату
         goTo(3);
     }
 
@@ -384,14 +337,9 @@
             html += `<p>📍 <span class="label">Формат:</span> ${answers.format}</p>`;
         }
         
-        // Отображаем "Другое" если есть
-        if (answers.custom) {
-            html += `<p>✏️ <span class="label">Свой вариант:</span> ${answers.custom}</p>`;
-        }
-        
-        // Отображаем "Шеф Владик" если есть
         if (answers.detail) {
-            html += `<p>🍳 <span class="label">Блюдо:</span> ${answers.detail}</p>`;
+            const label = answers.format === 'Шеф Владик' ? '🍳 Блюдо:' : '📍 Место:';
+            html += `<p>${label} <span class="label">${answers.detail}</span></p>`;
         }
 
         card.innerHTML = html || '<p>Нет данных</p>';
@@ -446,18 +394,16 @@
                 return;
             }
 
-            // ✅ ОТПРАВЛЯЕМ ВСЕ ПОЛЯ
+            // ✅ ОТПРАВЛЯЕМ ДАННЫЕ
             const params = new URLSearchParams();
             params.append('want', answers.want || '');
             params.append('format', answers.format || '');
-            params.append('custom', answers.custom || '');   // "Другое"
-            params.append('detail', answers.detail || '');   // "Шеф Владик"
+            params.append('detail', answers.detail || '');
 
             console.log('📤 ОТПРАВКА ДАННЫХ:');
             console.log('  want:', answers.want);
             console.log('  format:', answers.format);
-            console.log('  custom (Другое):', answers.custom);
-            console.log('  detail (Шеф):', answers.detail);
+            console.log('  detail:', answers.detail);
             console.log('  Полный запрос:', params.toString());
 
             const response = await fetch(GOOGLE_URL, {
@@ -500,17 +446,13 @@
         answers = {
             want: '',
             format: '',
-            custom: '',
             detail: ''
         };
         noBtnAttempts = 0;
         
-        document.getElementById('customBlock').className = 'detail-input hidden';
-        document.getElementById('chefBlock').className = 'detail-input hidden';
-        document.getElementById('customInput').value = '';
-        document.getElementById('chefInput').value = '';
-        document.getElementById('customError').classList.remove('show');
-        document.getElementById('chefError').classList.remove('show');
+        document.getElementById('detailBlock').className = 'detail-input hidden';
+        document.getElementById('detailInput').value = '';
+        document.getElementById('detailError').classList.remove('show');
         
         const noBtn = document.getElementById('noBtn');
         if (noBtn) {
@@ -530,30 +472,17 @@
     document.addEventListener('DOMContentLoaded', function() {
         initNoButton();
         
-        // Enter для "Другое"
-        const customInput = document.getElementById('customInput');
-        if (customInput) {
-            customInput.addEventListener('keypress', function(e) {
+        const detailInput = document.getElementById('detailInput');
+        if (detailInput) {
+            detailInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    saveCustom();
-                }
-            });
-        }
-        
-        // Enter для "Шеф Владик"
-        const chefInput = document.getElementById('chefInput');
-        if (chefInput) {
-            chefInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    saveChef();
+                    saveDetail();
                 }
             });
         }
         
         console.log('🚀 Приложение загружено!');
-        console.log('📌 "Другое" и "Шеф Владик" - независимые поля');
     });
 
     // ====== ОБРАБОТКА ОШИБОК ======
