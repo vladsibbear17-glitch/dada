@@ -84,7 +84,12 @@
         }
         .btn-secondary:hover { background: rgba(50, 50, 50, 0.9); color: #aaddaa; }
         .form-group { margin-bottom: 20px; text-align: left; }
-        .form-group label { color: #88bb88; font-size: 14px; display: block; margin-bottom: 8px; }
+        .form-group label { 
+            color: #88bb88; 
+            font-size: 14px; 
+            display: block; 
+            margin-bottom: 8px; 
+        }
         .form-group input {
             width: 100%;
             padding: 14px;
@@ -142,6 +147,16 @@
             z-index: 9999 !important;
             transition: all 0.08s ease;
         }
+        .detail-input {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(30, 50, 30, 0.3);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 136, 0.1);
+        }
+        .detail-input.show {
+            display: block;
+        }
         @media (max-width: 500px) {
             #app { padding: 25px 20px; }
             .options { grid-template-columns: 1fr 1fr; }
@@ -158,7 +173,7 @@
             <h2>Ренатик, ты пойдешь со мной на свидание?</h2>
             <div class="options">
                 <button class="option-btn" onclick="save('want','да',2)" style="border-color:#00aa44; color:#88ff88;">💚 Да!</button>
-                <button class="option-btn" id="noBtn" onclick="save('want','нет',2)">❌ Нет</button>
+                <button class="option-btn" id="noBtn" onclick="save('want','нет',3)">❌ Нет</button>
             </div>
         </div>
 
@@ -168,19 +183,21 @@
             <span class="step-num">ШАГ 2</span>
             <h2>Что бы ты хотела? 🎯</h2>
             <div class="options">
-                <button class="option-btn" onclick="save('format','Ресторан',3)">🍽 Ресторан</button>
-                <button class="option-btn" onclick="save('format','Кино',3)">🎬 Кино</button>
-                <button class="option-btn" onclick="save('format','Парк',3)">🌳 Парк</button>
-                <button class="option-btn" onclick="save('format','Кафе',3)">☕ Кафе</button>
-                <button class="option-btn" onclick="save('format','Квест',3)">🔐 Квест</button>
-                <button class="option-btn" onclick="showCustom()">✏️ Другое</button>
-                <button class="option-btn" onclick="save('format','Шеф Владик',3)" style="border-color:#ffaa00; color:#ffcc44;">👨‍🍳 Шеф Владик</button>
+                <button class="option-btn" onclick="selectFormat('Ресторан')">🍽 Ресторан</button>
+                <button class="option-btn" onclick="selectFormat('Кино')">🎬 Кино</button>
+                <button class="option-btn" onclick="selectFormat('Парк')">🌳 Парк</button>
+                <button class="option-btn" onclick="selectFormat('Кафе')">☕ Кафе</button>
+                <button class="option-btn" onclick="selectFormat('Квест')">🔐 Квест</button>
+                <button class="option-btn" onclick="selectFormat('Другое')">✏️ Другое</button>
+                <button class="option-btn" onclick="selectFormat('Шеф Владик')" style="border-color:#ffaa00; color:#ffcc44; grid-column: span 2;">👨‍🍳 Шеф Владик</button>
             </div>
-            <div id="customInput" style="display:none; margin-top:15px;">
+            
+            <!-- Поле для ввода деталей -->
+            <div id="detailBlock" class="detail-input" style="display:none;">
                 <div class="form-group">
-                    <label>Напиши что хочешь:</label>
-                    <input type="text" id="customPlace" placeholder="Например: Итальянский ресторан...">
-                    <button class="btn-primary" onclick="saveCustom()">✅ Выбрать</button>
+                    <label id="detailLabel">Что приготовить? 🍳</label>
+                    <input type="text" id="detailInput" placeholder="Напиши детали...">
+                    <button class="btn-primary" onclick="saveDetail()">✅ Готово!</button>
                 </div>
             </div>
         </div>
@@ -203,6 +220,7 @@
     // ====== ДАННЫЕ ======
     let answers = {};
     let noBtnAttempts = 0;
+    let selectedFormat = '';
 
     // ====== НАВИГАЦИЯ ======
     function goTo(step) {
@@ -213,24 +231,51 @@
         if (step === 3) showResult();
     }
 
+    // ====== ВЫБОР ФОРМАТА ======
+    function selectFormat(format) {
+        selectedFormat = format;
+        answers.format = format;
+        
+        // Показываем поле для ввода если нужно
+        const detailBlock = document.getElementById('detailBlock');
+        const detailInput = document.getElementById('detailInput');
+        const detailLabel = document.getElementById('detailLabel');
+        
+        if (format === 'Шеф Владик') {
+            detailBlock.style.display = 'block';
+            detailLabel.textContent = '🍳 Какое блюдо приготовить?';
+            detailInput.placeholder = 'Например: Спагетти карбонара, Пицца...';
+            detailInput.value = '';
+            detailInput.focus();
+        } else if (format === 'Другое') {
+            detailBlock.style.display = 'block';
+            detailLabel.textContent = '📍 Какое место ты хочешь?';
+            detailInput.placeholder = 'Напиши куда хочешь пойти...';
+            detailInput.value = '';
+            detailInput.focus();
+        } else {
+            detailBlock.style.display = 'none';
+            // Для обычных форматов сразу переходим к результату
+            goTo(3);
+        }
+    }
+
+    // ====== СОХРАНИТЬ ДЕТАЛИ ======
+    function saveDetail() {
+        const detail = document.getElementById('detailInput').value.trim();
+        if (!detail) {
+            alert('Пожалуйста, напиши детали!');
+            return;
+        }
+        answers.detail = detail;
+        document.getElementById('detailBlock').style.display = 'none';
+        goTo(3);
+    }
+
     // ====== СОХРАНИТЬ ОТВЕТ ======
     function save(key, value, next) {
         answers[key] = value;
         goTo(next);
-    }
-
-    // ====== ДРУГОЕ ======
-    function showCustom() {
-        document.getElementById('customInput').style.display = 'block';
-    }
-
-    function saveCustom() {
-        const val = document.getElementById('customPlace').value.trim();
-        if (!val) { alert('Напиши что хочешь!'); return; }
-        answers.format = 'Другое';
-        answers.custom = val;
-        document.getElementById('customInput').style.display = 'none';
-        goTo(3);
     }
 
     // ====== РЕЗУЛЬТАТ ======
@@ -241,8 +286,14 @@
         if (answers.want === 'да') html += `<p>💚 <span class="label">Ренатик сказала ДА!</span></p>`;
         else if (answers.want === 'нет') html += `<p>❌ <span class="label">Ренатик сказала НЕТ...</span></p>`;
         
-        if (answers.format) html += `<p>📍 <span class="label">Формат:</span> ${answers.format}</p>`;
-        if (answers.custom) html += `<p>✏️ <span class="label">Свой вариант:</span> ${answers.custom}</p>`;
+        if (answers.format) {
+            html += `<p>📍 <span class="label">Формат:</span> ${answers.format}</p>`;
+        }
+        
+        if (answers.detail) {
+            const label = answers.format === 'Шеф Владик' ? '🍳 Блюдо:' : '📍 Место:';
+            html += `<p>${label} <span class="label">${answers.detail}</span></p>`;
+        }
 
         card.innerHTML = html || '<p>Нет данных</p>';
     }
@@ -254,7 +305,7 @@
         btn.addEventListener('mouseenter', function(e) {
             if (noBtnAttempts > 8) {
                 btn.textContent = '😅 Ладно, нажми';
-                btn.onclick = function() { save('want','нет',2); };
+                btn.onclick = function() { save('want','нет',3); };
                 return;
             }
             noBtnAttempts++;
@@ -278,18 +329,19 @@
         if (btn) btn.style.display = 'none';
     }
 
-    // ====== ОТПРАВКА - ТОЛЬКО 3 ПОЛЯ ======
+    // ====== ОТПРАВКА ======
     async function sendData() {
         const btn = document.querySelector('#step3 .btn-primary');
         btn.textContent = '⏳ Отправка...';
         btn.disabled = true;
 
         try {
-            // ✅ ОТПРАВЛЯЕМ ТОЛЬКО 3 ПОЛЯ:
+            // ✅ ОТПРАВЛЯЕМ 4 ПОЛЯ:
             const params = new URLSearchParams();
             params.append('want', answers.want || '');        // 1
             params.append('format', answers.format || '');    // 2
             params.append('custom', answers.custom || '');    // 3
+            params.append('detail', answers.detail || '');    // 4 - НОВОЕ ПОЛЕ!
 
             console.log('📤 Отправка:', params.toString());
 
@@ -329,8 +381,9 @@
         if (!confirm('Начать заново?')) return;
         answers = {};
         noBtnAttempts = 0;
-        document.getElementById('customInput').style.display = 'none';
-        document.getElementById('customPlace').value = '';
+        selectedFormat = '';
+        document.getElementById('detailBlock').style.display = 'none';
+        document.getElementById('detailInput').value = '';
         document.getElementById('noBtn').style.display = 'block';
         document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
         document.getElementById('step1').classList.add('active');
