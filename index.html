@@ -351,11 +351,6 @@
         card.innerHTML = html || '<p>Нет данных</p>';
     }
 
-    function formatDate(d) {
-        const date = new Date(d + 'T00:00:00');
-        return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-    }
-
     // ====== КНОПКА "НЕТ" УБЕГАЕТ ======
     function initNoButton() {
         const btn = document.getElementById('noBtn');
@@ -394,7 +389,7 @@
         btn.disabled = true;
 
         try {
-            // ✅ ПРАВИЛЬНЫЙ ПОРЯДОК - ТОЧНО КАК В ТАБЛИЦЕ!
+            // ✅ ПОРЯДОК ДОЛЖЕН СОВПАДАТЬ С ПОРЯДКОМ В GAS!
             const params = new URLSearchParams();
             params.append('want', answers.want || '');
             params.append('format', answers.format || '');
@@ -406,7 +401,16 @@
             params.append('time', answers.time || '');
             params.append('massage', answers.massage || '');
 
-            console.log('📤 Отправляем:', params.toString());
+            console.log('📤 Отправка данных:');
+            console.log('  want:', answers.want || 'пусто');
+            console.log('  format:', answers.format || 'пусто');
+            console.log('  custom:', answers.custom || 'пусто');
+            console.log('  cuisine:', answers.cuisine || 'пусто');
+            console.log('  genre:', answers.genre || 'пусто');
+            console.log('  chefDish:', answers.chefDish || 'пусто');
+            console.log('  date:', answers.date || 'пусто');
+            console.log('  time:', answers.time || 'пусто');
+            console.log('  massage:', answers.massage || 'пусто');
 
             const response = await fetch(GOOGLE_URL, {
                 method: 'POST',
@@ -417,7 +421,6 @@
             const text = await response.text();
             console.log('📥 Ответ:', text);
             
-            // Парсим ответ
             let result;
             try {
                 result = JSON.parse(text);
